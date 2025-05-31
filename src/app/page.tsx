@@ -1,3 +1,4 @@
+
 import MainHeader from "@/components/navigation/main-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -21,10 +22,10 @@ export default function HomePage() {
             </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4">
               <Button size="lg" asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Link href="/register">Get Started</Link>
+                <Link href="/auth/login">Get Started</Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
-                <Link href="/login">Log In</Link>
+                <Link href="/auth/login">Log In</Link>
               </Button>
             </div>
           </div>
@@ -74,7 +75,7 @@ export default function HomePage() {
                             Whether it's a quick trip across town or a ride to the airport, Paradise Rides ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
                         </p>
                         <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                            <Link href="/dashboard">Book a Ride Now</Link>
+                            <Link href="/app/dashboard">Book a Ride Now</Link>
                         </Button>
                     </div>
                     <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">

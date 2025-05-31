@@ -7,6 +7,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react"; // Added import for useState
 
 import { Button } from "@/components/ui/button";
 import {
@@ -343,3 +344,4 @@ export default function DriverOnboardingForm() {
     </Card>
   );
 }
+

@@ -1,6 +1,21 @@
-// This file's content has been replaced to prevent routing conflicts.
-// The active driver layout is located at /src/app/driver/layout.tsx.
-// This /src/app/(driver)/layout.tsx path should ideally be removed.
-export default function ConflictingDriverLayout() {
-  return null;
+
+import Link from "next/link";
+import { Car } from "lucide-react";
+
+export default function DriverLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
+       <Link href="/" className="mb-8 flex items-center space-x-2">
+          <Car className="h-8 w-8 text-primary" />
+          <span className="font-bold font-headline text-3xl text-primary">
+            Paradise Rides
+          </span>
+        </Link>
+      {children}
+    </div>
+  );
 }

@@ -13,7 +13,7 @@ export default function AppLayout({
       </main>
       <footer className="border-t py-4">
         <div className="container text-center text-sm text-muted-foreground">
-          DispatchNow &copy; {new Date().getFullYear()}
+          Paradise Rides &copy; {new Date().getFullYear()}
         </div>
       </footer>
     </div>

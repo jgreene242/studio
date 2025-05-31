@@ -14,7 +14,7 @@ export default function HomePage() {
           <div className="container px-4 mx-auto">
             <Car className="h-16 w-16 text-primary mx-auto mb-6" />
             <h1 className="text-4xl md:text-5xl font-bold font-headline mb-6 text-primary">
-              Welcome to DispatchNow
+              Welcome to Paradise Rides
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
               Your reliable and efficient taxi service. Get a ride in minutes, track your journey, and pay seamlessly.
@@ -34,7 +34,7 @@ export default function HomePage() {
         <section className="py-16 md:py-24">
           <div className="container px-4 mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-12 md:mb-16">
-              Why Choose DispatchNow?
+              Why Choose Paradise Rides?
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-6 border bg-card rounded-lg shadow-sm text-center">
@@ -71,7 +71,7 @@ export default function HomePage() {
                             Travel with Comfort and Style
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8">
-                            Whether it's a quick trip across town or a ride to the airport, DispatchNow ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
+                            Whether it's a quick trip across town or a ride to the airport, Paradise Rides ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
                         </p>
                         <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
                             <Link href="/dashboard">Book a Ride Now</Link>
@@ -107,7 +107,7 @@ export default function HomePage() {
       </main>
       <footer className="border-t py-8 bg-background">
         <div className="container px-4 mx-auto text-center text-sm text-muted-foreground">
-          DispatchNow &copy; {new Date().getFullYear()}. All rights reserved.
+          Paradise Rides &copy; {new Date().getFullYear()}. All rights reserved.
         </div>
       </footer>
     </div>

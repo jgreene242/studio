@@ -11,7 +11,7 @@ export default function AuthLayout({
        <Link href="/" className="mb-8 flex items-center space-x-2">
           <Car className="h-8 w-8 text-primary" />
           <span className="font-bold font-headline text-3xl text-primary">
-            DispatchNow
+            Paradise Rides
           </span>
         </Link>
       {children}

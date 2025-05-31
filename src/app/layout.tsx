@@ -9,8 +9,8 @@ const ptSansFont = PT_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "DispatchNow - Your Reliable Taxi Service",
-  description: "DispatchNow offers easy taxi booking, real-time ride tracking, and seamless payments. Sign up or log in to get started.",
+  title: "Paradise Rides - Your Reliable Taxi Service",
+  description: "Paradise Rides offers easy taxi booking, real-time ride tracking, and seamless payments. Sign up or log in to get started.",
 };
 
 export default function RootLayout({

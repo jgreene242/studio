@@ -1,4 +1,6 @@
-// This layout has been moved to /driver/layout.tsx to resolve a route conflict.
-// This file can be safely deleted.
-// To resolve a Next.js routing conflict, this file no longer exports a layout component.
-export {}; // Ensures this is a module but exports nothing that Next.js would use for a layout.
+// This file's content has been replaced to prevent routing conflicts.
+// The active driver layout is located at /src/app/driver/layout.tsx.
+// This /src/app/(driver)/layout.tsx path should ideally be removed.
+export default function ConflictingDriverLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

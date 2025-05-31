@@ -1,4 +1,6 @@
-// This page has been moved to /driver/dashboard to resolve a route conflict.
-// This file can be safely deleted.
-// To resolve a Next.js routing conflict, this file no longer exports a page component.
-export {}; // Ensures this is a module but exports nothing that Next.js would use for a page.
+// This file's content has been replaced to prevent routing conflicts.
+// The active driver dashboard page is located at /src/app/driver/dashboard/page.tsx.
+// This /src/app/(driver)/dashboard/page.tsx path should ideally be removed.
+export default function ConflictingDriverDashboardPage() {
+  return null;
+}

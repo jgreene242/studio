@@ -1,7 +1,9 @@
+
 import type { Metadata } from "next";
 import { PT_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/context/AuthContext"; // Added AuthProvider
 
 const ptSansFont = PT_Sans({
   subsets: ["latin"],
@@ -21,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${ptSansFont.className} bg-background text-foreground antialiased`}>
-        {children}
-        <Toaster />
+        <AuthProvider> {/* Wrapped children with AuthProvider */}
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

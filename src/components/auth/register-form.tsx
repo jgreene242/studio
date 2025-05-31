@@ -1,9 +1,13 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Added for redirection
+import { useAuth } from "@/context/AuthContext"; // Added useAuth
+import { useToast } from "@/hooks/use-toast"; // Added useToast
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { UserPlus, Chrome } from 'lucide-react'; // Using Chrome as a generic 'Google' icon
+import { UserPlus, Chrome, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -30,6 +34,10 @@ const formSchema = z.object({
 });
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const { signUpWithEmail, loading } = useAuth();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,17 +48,19 @@ export default function RegisterForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement actual registration logic
-    console.log(values);
-    // router.push('/dashboard'); // Redirect on successful registration
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const user = await signUpWithEmail(values.name, values.email, values.password);
+    if (user) {
+      router.push('/app/dashboard'); // Redirect on successful registration
+    }
+    // Errors are handled by toast within signUpWithEmail
   }
 
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
-        <CardDescription>Join DispatchNow to start your journey.</CardDescription>
+        <CardDescription>Join Paradise Rides to start your journey.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -62,7 +72,7 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} disabled={loading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -75,7 +85,7 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="you@example.com" {...field} disabled={loading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,7 +98,7 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={loading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,20 +111,21 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={loading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-             <UserPlus className="mr-2 h-4 w-4" /> Sign Up
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={loading}>
+             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+             Sign Up
             </Button>
           </form>
         </Form>
         <Separator className="my-6" />
         <div className="space-y-4">
-           <Button variant="outline" className="w-full">
+           <Button variant="outline" className="w-full" disabled={loading}>
                 <Chrome className="mr-2 h-4 w-4" /> Continue with Google
             </Button>
              {/* Add other social logins like Apple, Facebook as needed */}
@@ -123,7 +134,7 @@ export default function RegisterForm() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href="/auth/login" className="font-medium text-primary hover:underline">
             Log in
           </Link>
         </p>

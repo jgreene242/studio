@@ -1,20 +1,23 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
+import { useRouter } from 'next/navigation'; // Added useRouter
+import { useAuth } from '@/context/AuthContext'; // Added useAuth
 import DestinationInputForm from '@/components/ride/destination-input-form';
 import VehicleSelector from '@/components/ride/vehicle-selector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign, Zap } from 'lucide-react'; // Zap for Promo
+import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react'; // Zap for Promo, Added Loader2
 import Image from 'next/image';
 
 interface RideDetails {
   pickup: string;
   destination: string;
   vehicleId?: string;
-  fare?: string; // Example: "$15-20"
-  eta?: string; // Example "5-7 min"
+  fare?: string; 
+  eta?: string; 
   paymentMethod?: string;
   promoCode?: string;
 }
@@ -28,8 +31,24 @@ const vehicleFaresAndEtas: Record<string, { fare: string, eta: string }> = {
 
 
 export default function DashboardPage() {
-  const [step, setStep] = useState(1); // 1: Destination, 2: Vehicle, 3: Confirm
+  const [step, setStep] = useState(1); 
   const [rideDetails, setRideDetails] = useState<RideDetails | null>(null);
+  const { user, initialLoading: authInitialLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authInitialLoading && !user) {
+      router.push('/auth/login?redirect=/app/dashboard');
+    }
+  }, [user, authInitialLoading, router]);
+
+  if (authInitialLoading || !user) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const handleDestinationSet = (pickup: string, destination: string) => {
     setRideDetails({ pickup, destination });
@@ -45,10 +64,8 @@ export default function DashboardPage() {
   
   const handleConfirmRide = () => {
     // TODO: Implement actual ride confirmation logic
-    // This would involve API calls, etc.
     alert(`Ride requested! Details: \nPickup: ${rideDetails?.pickup}\nDestination: ${rideDetails?.destination}\nVehicle: ${rideDetails?.vehicleId}\nFare: ${rideDetails?.fare}\nETA: ${rideDetails?.eta}`);
-    // Example: router.push(`/ride/${newRideId}/track`);
-    // Reset for new ride
+    // Example: router.push(`/app/ride/${newRideId}/track`); // Updated path
     setStep(1);
     setRideDetails(null);
   };
@@ -117,8 +134,6 @@ export default function DashboardPage() {
             <div>
                 <h3 className="font-semibold mb-2">Promo Code</h3>
                 <div className="flex gap-2">
-                    {/* <Input placeholder="Enter promo code" />
-                    <Button variant="outline">Apply</Button> */}
                      <Button variant="ghost" className="w-full border border-dashed">
                         <Zap className="w-4 h-4 mr-2 text-accent"/> Add Promo Code / Voucher
                     </Button>

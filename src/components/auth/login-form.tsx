@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Added for redirection
-import { useAuth } from "@/context/AuthContext"; // Added useAuth
-import { useToast } from "@/hooks/use-toast"; // Added useToast
+import { useRouter, useSearchParams } from "next/navigation"; 
+import { useAuth } from "@/context/AuthContext"; 
+import { useToast } from "@/hooks/use-toast"; 
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +30,8 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
-  const { signInWithEmail, loading } = useAuth();
+  const searchParams = useSearchParams();
+  const { signInWithEmail, signInWithGoogle, loading } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,10 +45,18 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const user = await signInWithEmail(values.email, values.password);
     if (user) {
-      router.push('/app/dashboard'); // Redirect on successful login
+      const redirectUrl = searchParams.get('redirect') || '/app/dashboard';
+      router.push(redirectUrl); 
     }
-    // Errors are handled by toast within signInWithEmail
   }
+
+  const handleGoogleSignIn = async () => {
+    const user = await signInWithGoogle();
+    if (user) {
+      const redirectUrl = searchParams.get('redirect') || '/app/dashboard';
+      router.push(redirectUrl);
+    }
+  };
 
   return (
     <Card className="w-full max-w-md shadow-xl">
@@ -97,10 +106,10 @@ export default function LoginForm() {
         </Form>
         <Separator className="my-6" />
         <div className="space-y-4">
-            <Button variant="outline" className="w-full" disabled={loading}>
-                <Chrome className="mr-2 h-4 w-4" /> Continue with Google
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Chrome className="mr-2 h-4 w-4" />}
+                 Continue with Google
             </Button>
-             {/* Add other social logins like Apple, Facebook as needed */}
         </div>
       </CardContent>
       <CardFooter className="justify-center">

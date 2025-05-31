@@ -1,15 +1,15 @@
 
 "use client";
 
-import { useState, useEffect } from 'react'; // Added useEffect
-import { useRouter } from 'next/navigation'; // Added useRouter
-import { useAuth } from '@/context/AuthContext'; // Added useAuth
+import { useState, useEffect } from 'react'; 
+import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
+import { useAuth } from '@/context/AuthContext'; 
 import DestinationInputForm from '@/components/ride/destination-input-form';
 import VehicleSelector from '@/components/ride/vehicle-selector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react'; // Zap for Promo, Added Loader2
+import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react'; 
 import Image from 'next/image';
 
 interface RideDetails {
@@ -35,10 +35,13 @@ export default function DashboardPage() {
   const [rideDetails, setRideDetails] = useState<RideDetails | null>(null);
   const { user, initialLoading: authInitialLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams(); // Get search params
 
   useEffect(() => {
     if (!authInitialLoading && !user) {
-      router.push('/auth/login?redirect=/app/dashboard');
+      // Preserve current path for redirection after login
+      const currentPath = window.location.pathname + window.location.search;
+      router.push(`/auth/login?redirect=${encodeURIComponent(currentPath)}`);
     }
   }, [user, authInitialLoading, router]);
 
@@ -65,7 +68,7 @@ export default function DashboardPage() {
   const handleConfirmRide = () => {
     // TODO: Implement actual ride confirmation logic
     alert(`Ride requested! Details: \nPickup: ${rideDetails?.pickup}\nDestination: ${rideDetails?.destination}\nVehicle: ${rideDetails?.vehicleId}\nFare: ${rideDetails?.fare}\nETA: ${rideDetails?.eta}`);
-    // Example: router.push(`/app/ride/${newRideId}/track`); // Updated path
+    // Example: router.push(`/app/ride/${newRideId}/track`); 
     setStep(1);
     setRideDetails(null);
   };
@@ -157,3 +160,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

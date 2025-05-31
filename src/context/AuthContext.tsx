@@ -8,9 +8,11 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut as firebaseSignOut,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider, // Added
+  signInWithPopup      // Added
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore'; // Added getDoc
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,8 +22,8 @@ interface AuthContextType {
   initialLoading: boolean;
   signUpWithEmail: (name: string, email: string, pass: string) => Promise<User | null>;
   signInWithEmail: (email: string, pass: string) => Promise<User | null>;
+  signInWithGoogle: () => Promise<User | null>; // Added
   appSignOut: () => Promise<void>;
-  // Add other methods like signInWithGoogle later
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,8 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Optionally fetch more user details from Firestore here if needed
-        // For now, the Firebase User object is sufficient for display name
         setUser(currentUser);
       } else {
         setUser(null);
@@ -52,16 +52,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(userCredential.user, { displayName: name });
       
-      // Create user document in Firestore
       await setDoc(doc(db, "users", userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
         name: name,
+        profilePictureUrl: userCredential.user.photoURL || "",
         createdAt: serverTimestamp(),
-        role: "passenger", // Default role
+        role: "passenger", 
       });
 
-      setUser(userCredential.user); // Update local state immediately
+      setUser(userCredential.user);
       toast({ title: "Registration Successful", description: "Welcome to Paradise Rides!" });
       return userCredential.user;
     } catch (error: any) {
@@ -89,6 +89,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithGoogle = async (): Promise<User | null> => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const googleUser = result.user;
+
+      // Check if user exists in Firestore, if not, create them
+      const userDocRef = doc(db, "users", googleUser.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          uid: googleUser.uid,
+          email: googleUser.email,
+          name: googleUser.displayName,
+          profilePictureUrl: googleUser.photoURL || "",
+          createdAt: serverTimestamp(),
+          role: "passenger",
+        });
+      }
+      // The onAuthStateChanged listener will handle setting the user state.
+      // However, we can set it here for immediate UI update if desired,
+      // but it might cause a quick flicker if onAuthStateChanged is slightly delayed.
+      // For simplicity, let onAuthStateChanged handle it, or update here:
+      setUser(googleUser); 
+      toast({ title: "Google Sign-In Successful", description: `Welcome, ${googleUser.displayName}!` });
+      return googleUser;
+    } catch (error: any) {
+      console.error("Google sign in error:", error);
+      // Handle specific errors like popup closed by user
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast({ variant: "default", title: "Sign-In Cancelled", description: "Google Sign-In was cancelled." });
+      } else {
+        toast({ variant: "destructive", title: "Google Sign-In Failed", description: error.message });
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const appSignOut = async () => {
     setLoading(true);
     try {
@@ -104,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, initialLoading, signUpWithEmail, signInWithEmail, appSignOut }}>
+    <AuthContext.Provider value={{ user, loading, initialLoading, signUpWithEmail, signInWithEmail, signInWithGoogle, appSignOut }}>
       {children}
     </AuthContext.Provider>
   );

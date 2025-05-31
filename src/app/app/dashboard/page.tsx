@@ -1,45 +1,48 @@
 
 "use client";
 
-import { useState, useEffect } from 'react'; 
-import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
-import { useAuth } from '@/context/AuthContext'; 
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import DestinationInputForm from '@/components/ride/destination-input-form';
 import VehicleSelector from '@/components/ride/vehicle-selector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react'; 
-import Image from 'next/image';
+import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 interface RideDetails {
   pickup: string;
   destination: string;
   vehicleId?: string;
-  fare?: string; 
-  eta?: string; 
+  fare?: string;
+  eta?: string;
   paymentMethod?: string;
   promoCode?: string;
 }
 
-const vehicleFaresAndEtas: Record<string, { fare: string, eta: string }> = {
-    'standard': { fare: '$15-20', eta: '5-7 min' },
-    'premium': { fare: '$25-35', eta: '8-10 min' },
-    'van': { fare: '$30-45', eta: '10-15 min' },
-    'accessible': { fare: '$20-28', eta: '12-18 min' },
+const vehicleFaresAndEtas: Record<string, { fare: string, eta: string, name: string, image: string }> = {
+    'standard': { fare: '$15-20', eta: '5-7 min', name: 'Standard Taxi', image: 'https://placehold.co/100x60.png?text=Standard' },
+    'premium': { fare: '$25-35', eta: '8-10 min', name: 'Premium Taxi', image: 'https://placehold.co/100x60.png?text=Premium' },
+    'van': { fare: '$30-45', eta: '10-15 min', name: 'Taxi Van', image: 'https://placehold.co/100x60.png?text=Van' },
+    'accessible': { fare: '$20-28', eta: '12-18 min', name: 'Accessible Taxi', image: 'https://placehold.co/100x60.png?text=Accessible' },
 };
 
 
 export default function DashboardPage() {
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [rideDetails, setRideDetails] = useState<RideDetails | null>(null);
   const { user, initialLoading: authInitialLoading } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams(); // Get search params
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const [isConfirmingRide, setIsConfirmingRide] = useState(false);
 
   useEffect(() => {
     if (!authInitialLoading && !user) {
-      // Preserve current path for redirection after login
       const currentPath = window.location.pathname + window.location.search;
       router.push(`/auth/login?redirect=${encodeURIComponent(currentPath)}`);
     }
@@ -60,17 +63,48 @@ export default function DashboardPage() {
 
   const handleVehicleSelect = (vehicleId: string) => {
     if (rideDetails) {
-      setRideDetails({ ...rideDetails, vehicleId, ...vehicleFaresAndEtas[vehicleId] });
+      const vehicleInfo = vehicleFaresAndEtas[vehicleId];
+      setRideDetails({ ...rideDetails, vehicleId, fare: vehicleInfo.fare, eta: vehicleInfo.eta });
       setStep(3);
     }
   };
-  
-  const handleConfirmRide = () => {
-    // TODO: Implement actual ride confirmation logic
-    alert(`Ride requested! Details: \nPickup: ${rideDetails?.pickup}\nDestination: ${rideDetails?.destination}\nVehicle: ${rideDetails?.vehicleId}\nFare: ${rideDetails?.fare}\nETA: ${rideDetails?.eta}`);
-    // Example: router.push(`/app/ride/${newRideId}/track`); 
-    setStep(1);
-    setRideDetails(null);
+
+  const handleConfirmRide = async () => {
+    if (!rideDetails || !user || !rideDetails.vehicleId) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Missing ride details or user information.' });
+      return;
+    }
+    setIsConfirmingRide(true);
+    try {
+      const vehicleInfo = vehicleFaresAndEtas[rideDetails.vehicleId];
+      const rideDocRef = await addDoc(collection(db, "rides"), {
+        passengerId: user.uid,
+        passengerName: user.displayName || user.email,
+        pickupLocation: rideDetails.pickup,
+        destinationLocation: rideDetails.destination,
+        vehicleId: rideDetails.vehicleId,
+        vehicleName: vehicleInfo.name,
+        vehicleImage: vehicleInfo.image, // Store image for history display
+        fare: rideDetails.fare,
+        eta: rideDetails.eta,
+        status: 'requested',
+        createdAt: serverTimestamp(),
+        // paymentMethod: rideDetails.paymentMethod, // Add later
+        // promoCode: rideDetails.promoCode, // Add later
+      });
+
+      toast({ title: "Ride Requested!", description: "Your ride is being processed." });
+      router.push(`/app/ride/${rideDocRef.id}/track`);
+      // Reset flow after successful request for next time
+      // setStep(1);
+      // setRideDetails(null); 
+      // Let the redirect handle the state change, or reset on the tracking page.
+    } catch (error) {
+      console.error("Error requesting ride: ", error);
+      toast({ variant: 'destructive', title: 'Request Failed', description: 'Could not request your ride. Please try again.' });
+    } finally {
+      setIsConfirmingRide(false);
+    }
   };
 
   const resetFlow = () => {
@@ -96,7 +130,7 @@ export default function DashboardPage() {
                 <p><strong className="font-medium">To:</strong> {rideDetails.destination}</p>
             </CardContent>
           </Card>
-          <VehicleSelector onVehicleSelect={handleVehicleSelect} />
+          <VehicleSelector onVehicleSelect={handleVehicleSelect} vehicleData={vehicleFaresAndEtas} />
         </>
       )}
 
@@ -111,11 +145,11 @@ export default function DashboardPage() {
               <h3 className="font-semibold mb-1">Trip Details</h3>
               <p><strong className="font-medium">From:</strong> {rideDetails.pickup}</p>
               <p><strong className="font-medium">To:</strong> {rideDetails.destination}</p>
-              <p><strong className="font-medium">Vehicle:</strong> {rideDetails.vehicleId.charAt(0).toUpperCase() + rideDetails.vehicleId.slice(1)} Taxi</p>
+              <p><strong className="font-medium">Vehicle:</strong> {vehicleFaresAndEtas[rideDetails.vehicleId].name}</p>
               <p><strong className="font-medium">Estimated Fare:</strong> {rideDetails.fare}</p>
               <p><strong className="font-medium">Estimated Arrival:</strong> {rideDetails.eta}</p>
             </div>
-            
+
             <Separator />
 
             <div>
@@ -123,7 +157,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
                     <div className="flex items-center">
                         <CreditCard className="w-5 h-5 mr-3 text-primary"/>
-                        <span>Visa **** 4242</span>
+                        <span>Visa **** 4242</span> {/* Placeholder */}
                     </div>
                     <Button variant="link" size="sm" className="text-primary">Change</Button>
                 </div>
@@ -133,7 +167,7 @@ export default function DashboardPage() {
             </div>
 
             <Separator />
-            
+
             <div>
                 <h3 className="font-semibold mb-2">Promo Code</h3>
                 <div className="flex gap-2">
@@ -144,14 +178,15 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-2">
-              <Button variant="outline" onClick={() => setStep(2)} className="w-full sm:w-auto">
+              <Button variant="outline" onClick={() => setStep(2)} className="w-full sm:w-auto" disabled={isConfirmingRide}>
                 Back to Vehicle Selection
               </Button>
-              <Button onClick={handleConfirmRide} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button onClick={handleConfirmRide} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isConfirmingRide}>
+                {isConfirmingRide ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Confirm & Request Ride
               </Button>
             </div>
-             <Button variant="link" onClick={resetFlow} className="w-full mt-2 text-sm text-muted-foreground">
+             <Button variant="link" onClick={resetFlow} className="w-full mt-2 text-sm text-muted-foreground" disabled={isConfirmingRide}>
                 Start Over
             </Button>
           </CardContent>
@@ -160,4 +195,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -5,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { CarFront, Bus, Diamond, Accessibility, CheckCircle2 } from 'lucide-react'; // Using Diamond for Premium
+import { CarFront, Bus, Diamond, Accessibility, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
-interface Vehicle {
+interface VehicleOption {
   id: string;
   name: string;
   description: string;
@@ -19,26 +20,39 @@ interface Vehicle {
   capacity: string;
 }
 
-const vehicleTypes: Vehicle[] = [
-  { id: 'standard', name: 'Standard Taxi', description: 'Affordable, everyday rides', icon: CarFront, eta: '5-7 min', fare: '$15-20', image: 'https://placehold.co/100x60.png?text=Standard', capacity: '1-4 passengers' },
-  { id: 'premium', name: 'Premium Taxi', description: 'Luxury vehicles for a comfortable ride', icon: Diamond, eta: '8-10 min', fare: '$25-35', image: 'https://placehold.co/100x60.png?text=Premium', capacity: '1-4 passengers' },
-  { id: 'van', name: 'Taxi Van', description: 'For larger groups or more luggage', icon: Bus, eta: '10-15 min', fare: '$30-45', image: 'https://placehold.co/100x60.png?text=Van', capacity: '1-6 passengers' },
-  { id: 'accessible', name: 'Accessible Taxi', description: 'Wheelchair accessible vehicles', icon: Accessibility, eta: '12-18 min', fare: '$20-28', image: 'https://placehold.co/100x60.png?text=Accessible', capacity: '1-2 passengers + wheelchair' },
-];
-
 interface VehicleSelectorProps {
   onVehicleSelect: (vehicleId: string) => void;
+  vehicleData: Record<string, { fare: string, eta: string, name: string, image: string, capacity?: string, description?: string, icon?: React.ElementType }>;
 }
 
-export default function VehicleSelector({ onVehicleSelect }: VehicleSelectorProps) {
+export default function VehicleSelector({ onVehicleSelect, vehicleData }: VehicleSelectorProps) {
+  
+  const vehicleTypes: VehicleOption[] = Object.entries(vehicleData).map(([id, data]) => ({
+    id,
+    name: data.name,
+    description: data.description || `Ride in a ${data.name.toLowerCase()}`,
+    icon: data.icon || (id === 'standard' ? CarFront : id === 'premium' ? Diamond : id === 'van' ? Bus : Accessibility),
+    eta: data.eta,
+    fare: data.fare,
+    image: data.image,
+    capacity: data.capacity || (id === 'van' ? '1-6 passengers' : '1-4 passengers'),
+  }));
+  
   const [selectedVehicle, setSelectedVehicle] = useState<string | undefined>(vehicleTypes[0]?.id);
 
   const handleSelect = (vehicleId: string) => {
     setSelectedVehicle(vehicleId);
-    onVehicleSelect(vehicleId);
+    // onVehicleSelect(vehicleId); // Call onVehicleSelect when main button is clicked
   };
   
   const currentVehicle = vehicleTypes.find(v => v.id === selectedVehicle);
+
+  const handleConfirmSelection = () => {
+    if (currentVehicle) {
+      onVehicleSelect(currentVehicle.id);
+    }
+  };
+
 
   return (
     <Card className="w-full shadow-lg">
@@ -49,7 +63,7 @@ export default function VehicleSelector({ onVehicleSelect }: VehicleSelectorProp
       <CardContent>
         <RadioGroup value={selectedVehicle} onValueChange={handleSelect} className="space-y-4">
           {vehicleTypes.map((vehicle) => (
-            <Label 
+            <Label
               key={vehicle.id}
               htmlFor={vehicle.id}
               className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${
@@ -57,7 +71,7 @@ export default function VehicleSelector({ onVehicleSelect }: VehicleSelectorProp
               }`}
             >
               <div className="flex items-center mb-2 sm:mb-0">
-                <Image src={vehicle.image} alt={vehicle.name} width={80} height={48} className="rounded mr-4 object-contain" data-ai-hint={`${vehicle.name} car`}/>
+                <Image src={vehicle.image} alt={vehicle.name} width={80} height={48} className="rounded mr-4 object-contain" data-ai-hint={`${vehicle.name} side view`} />
                 <div>
                   <div className="flex items-center">
                      <vehicle.icon className={`w-5 h-5 mr-2 ${selectedVehicle === vehicle.id ? 'text-primary' : 'text-accent'}`} />
@@ -67,7 +81,7 @@ export default function VehicleSelector({ onVehicleSelect }: VehicleSelectorProp
                   <p className="text-xs text-muted-foreground">{vehicle.capacity}</p>
                 </div>
               </div>
-              <div className="flex flex-col items-start sm:items-end text-sm w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-t-0 pt-2 sm:pt-0">
+              <div className="flex flex-col items-start sm:items-end text-sm w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-t-0 pt-2 sm:pt-0 pl-0 sm:pl-4">
                 <p className="font-medium">{vehicle.fare}</p>
                 <p className="text-xs text-muted-foreground">ETA: {vehicle.eta}</p>
               </div>
@@ -78,15 +92,16 @@ export default function VehicleSelector({ onVehicleSelect }: VehicleSelectorProp
         </RadioGroup>
 
         {currentVehicle && (
-            <Button 
-                onClick={() => onVehicleSelect(currentVehicle.id)} 
+            <Button
+                onClick={handleConfirmSelection}
                 className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground"
                 disabled={!selectedVehicle}
             >
-                Confirm {currentVehicle.name}
+                Confirm {currentVehicle.name} & Proceed
             </Button>
         )}
       </CardContent>
     </Card>
   );
 }
+

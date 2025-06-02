@@ -2,7 +2,7 @@
 import MainHeader from "@/components/navigation/main-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Car, Users, MapPinIcon } from "lucide-react"; // Using MapPinIcon for clarity if MapPin is a component
+import { Palmtree, Users, MapPin } from "lucide-react"; // Corrected PalmTree to Palmtree and MapPinIcon to MapPin
 import Image from "next/image";
 
 export default function HomePage() {
@@ -13,7 +13,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="bg-primary/10 py-16 md:py-24 text-center">
           <div className="container px-4 mx-auto">
-            <Car className="h-16 w-16 text-primary mx-auto mb-6" />
+            <Palmtree className="h-16 w-16 text-primary mx-auto mb-6" />
             <h1 className="text-4xl md:text-5xl font-bold font-headline mb-6 text-primary">
               Welcome to Paradise Rides
             </h1>
@@ -39,7 +39,7 @@ export default function HomePage() {
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-6 border bg-card rounded-lg shadow-sm text-center">
-                <MapPinIcon className="h-12 w-12 text-accent mx-auto mb-4" />
+                <MapPin className="h-12 w-12 text-accent mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Easy Booking</h3>
                 <p className="text-muted-foreground">
                   Request a ride with a few taps using our intuitive interface.
@@ -53,7 +53,8 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="p-6 border bg-card rounded-lg shadow-sm text-center">
-                <Car className="h-12 w-12 text-accent mx-auto mb-4" />
+                {/* Using Palmtree here too for consistency, or could be another relevant icon */}
+                <Palmtree className="h-12 w-12 text-accent mx-auto mb-4" /> 
                 <h3 className="text-xl font-semibold mb-2">Track Your Ride</h3>
                 <p className="text-muted-foreground">
                   Real-time tracking of your taxi's location and ETA.
@@ -84,7 +85,7 @@ export default function HomePage() {
                             alt="Comfortable taxi ride" 
                             fill
                             className="object-cover"
-                            data-ai-hint="city taxi modern"
+                            data-ai-hint="tropical beach taxi"
                          />
                     </div>
                 </div>

@@ -75,9 +75,7 @@ export default function HomePage() {
                         <p className="text-lg text-muted-foreground mb-8">
                             Whether it's a quick trip across town or a ride to the airport, Paradise Rides ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
                         </p>
-                        <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                            <Link href="/app/dashboard">Book a Ride Now</Link>
-                        </Button>
+                        {/* Button removed from here */}
                     </div>
                     <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
                          <Image 

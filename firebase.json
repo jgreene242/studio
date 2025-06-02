@@ -1,11 +1,10 @@
+
 {
   "apphosting": [
     {
       "backendId": "studio",
       "rootDir": "functions",
       "ignore": [
-        "node_modules",
-        ".git",
         "node_modules",
         ".git",
         "firebase-debug.log",
@@ -17,14 +16,18 @@
       ]
     },
     {
-      "source": "rides",
+      "source": ".",
       "codebase": "paradise",
       "ignore": [
         "node_modules",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
-        "*.local"
+        "*.local",
+        "functions",
+        "rides",
+        ".vscode",
+        "Paradise Rides"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint",

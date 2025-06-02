@@ -7,7 +7,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react"; // Added import for useState
+import { useState } from "react"; 
 
 import { Button } from "@/components/ui/button";
 import {
@@ -82,8 +82,7 @@ export default function DriverOnboardingForm() {
     // 1. Create Firebase Auth user (if not linking to existing passenger account)
     // 2. Upload documents to Firebase Storage, get download URLs
     // 3. Save driver details (including document URLs) to Firestore 'drivers' collection
-    // For now, just log the data and show a success toast
-    console.log("Driver Onboarding Data:", values);
+    
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -344,4 +343,5 @@ export default function DriverOnboardingForm() {
     </Card>
   );
 }
+
 

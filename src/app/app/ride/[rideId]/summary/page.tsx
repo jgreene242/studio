@@ -194,7 +194,7 @@ export default function RideSummaryPage() {
               alt={rideDetails.vehicleName || "Vehicle"}
               width={120} height={72}
               className="rounded-md object-contain mx-auto md:mx-0 md:ml-auto"
-              data-ai-hint={`${rideDetails.vehicleName || "car"} side view`}
+              data-ai-hint="vehicle side"
             />
           </div>
 
@@ -294,3 +294,4 @@ export default function RideSummaryPage() {
     </div>
   );
 }
+

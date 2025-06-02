@@ -186,7 +186,6 @@ export default function ProfilePage() {
                       <Input type="file" accept="image/*" className="text-sm max-w-xs" onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                            // For demo, just logging. In real app, upload and set URL.
-                           console.log("File selected:", e.target.files[0].name);
                            // field.onChange(URL.createObjectURL(e.target.files[0])); // This is temporary for preview
                            // TODO: Implement actual file upload logic and update field.value with the new URL
                            toast({title: "Note", description: "Profile picture upload is a demo. Actual upload needs to be implemented."})

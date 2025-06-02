@@ -24,11 +24,11 @@ interface RideDetails {
   promoCode?: string;
 }
 
-const vehicleFaresAndEtas: Record<string, { fare: string, eta: string, name: string, image: string }> = {
-    'standard': { fare: '$15-20', eta: '5-7 min', name: 'Standard Taxi', image: 'https://placehold.co/100x60.png?text=Standard' },
-    'premium': { fare: '$25-35', eta: '8-10 min', name: 'Premium Taxi', image: 'https://placehold.co/100x60.png?text=Premium' },
-    'van': { fare: '$30-45', eta: '10-15 min', name: 'Taxi Van', image: 'https://placehold.co/100x60.png?text=Van' },
-    'accessible': { fare: '$20-28', eta: '12-18 min', name: 'Accessible Taxi', image: 'https://placehold.co/100x60.png?text=Accessible' },
+const vehicleFaresAndEtas: Record<string, { fare: string, eta: string, name: string, image: string, "data-ai-hint": string }> = {
+    'standard': { fare: '$15-20', eta: '5-7 min', name: 'Standard Taxi', image: 'https://placehold.co/100x60.png?text=Standard', "data-ai-hint": "standard taxi" },
+    'premium': { fare: '$25-35', eta: '8-10 min', name: 'Premium Taxi', image: 'https://placehold.co/100x60.png?text=Premium', "data-ai-hint": "premium taxi" },
+    'van': { fare: '$30-45', eta: '10-15 min', name: 'Taxi Van', image: 'https://placehold.co/100x60.png?text=Van', "data-ai-hint": "taxi van" },
+    'accessible': { fare: '$20-28', eta: '12-18 min', name: 'Accessible Taxi', image: 'https://placehold.co/100x60.png?text=Accessible', "data-ai-hint": "accessible taxi" },
 };
 
 
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         destinationLocation: rideDetails.destination,
         vehicleId: rideDetails.vehicleId,
         vehicleName: vehicleInfo.name,
-        vehicleImage: vehicleInfo.image, // Store image for history display
+        vehicleImage: vehicleInfo.image, 
         fare: rideDetails.fare,
         eta: rideDetails.eta,
         status: 'requested',
@@ -195,3 +195,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

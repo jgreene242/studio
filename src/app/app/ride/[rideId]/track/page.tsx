@@ -171,7 +171,7 @@ export default function TrackRidePage() {
                     </div>
                 </div>
                  <div className="flex items-center space-x-4">
-                    <Image src={rideDetails.vehicleImage || "https://placehold.co/96x58.png?text=Vehicle"} alt={rideDetails.vehicleName || "Vehicle"} width={96} height={58} className="rounded object-contain" data-ai-hint={`${rideDetails.vehicleName || "car"} side view`} />
+                    <Image src={rideDetails.vehicleImage || "https://placehold.co/96x58.png?text=Vehicle"} alt={rideDetails.vehicleName || "Vehicle"} width={96} height={58} className="rounded object-contain" data-ai-hint="vehicle side" />
                     <div>
                         <p className="font-semibold text-lg">{rideDetails.vehicleName || "Vehicle (TBD)"}</p>
                         <div className="flex items-center text-sm text-muted-foreground">

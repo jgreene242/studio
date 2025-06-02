@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useState } from "react"; // Added this import
+import { useState } from "react";
+import { useRouter } from 'next/navigation'; // Enabled
+import { useToast } from "@/hooks/use-toast"; // Enabled
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,6 +56,8 @@ const onboardingSchema = z.object({
 
 export default function DriverOnboardingForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); // Enabled
+  const { toast } = useToast(); // Enabled
 
   const form = useForm<z.infer<typeof onboardingSchema>>({
     resolver: zodResolver(onboardingSchema),
@@ -82,12 +86,12 @@ export default function DriverOnboardingForm() {
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
-    // console.log("Driver onboarding data:", values); // Removed console.log
+    
 
     setIsLoading(false);
-    // router.push('/driver/dashboard'); // Or a "pending approval" page
+    router.push('/driver/dashboard'); // Enabled - Or a "pending approval" page
     form.reset();
-    // toast({ title: "Application Submitted!", description: "We will review your application and get back to you soon." });
+    toast({ title: "Application Submitted!", description: "We will review your application and get back to you soon." }); // Enabled
   }
 
   return (

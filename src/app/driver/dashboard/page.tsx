@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ListChecks, Map, BarChart3, DollarSign, AlertTriangle, Settings, LogOut, Loader2 } from "lucide-react";
+import { ListChecks, Map, DollarSign, AlertTriangle, Settings, LogOut, Loader2, Car, User } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext"; // Assuming drivers use the same AuthContext for now
 import { useRouter } from "next/navigation";

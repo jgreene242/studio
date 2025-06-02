@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import PopularDestinations from '@/components/ai/popular-destinations';
 import Image from 'next/image';
 import { MapPin, Search, LocateFixed, XCircle } from 'lucide-react';
+import { Search, LocateFixed, XCircle } from 'lucide-react';
 
 interface DestinationInputFormProps {
   onDestinationSet: (pickup: string, destination: string) => void;

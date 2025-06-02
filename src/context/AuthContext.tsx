@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Registration Successful", description: "Welcome to Paradise Rides!" });
       return userCredential.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Sign up error:", error);
       toast({ variant: "destructive", title: "Registration Failed", description: error.message });
       return null;
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Login Successful", description: "Welcome back!" });
       return userCredential.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Sign in error:", error);
       toast({ variant: "destructive", title: "Login Failed", description: error.message });
       return null;
@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(googleUser); 
       toast({ title: "Google Sign-In Successful", description: `Welcome, ${googleUser.displayName}!` });
       return googleUser;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Google sign in error:", error);
       // Handle specific errors like popup closed by user
       if (error.code === 'auth/popup-closed-by-user') {
@@ -138,7 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Sign out error:", error);
       toast({ variant: "destructive", title: "Logout Failed", description: error.message });
     } finally {

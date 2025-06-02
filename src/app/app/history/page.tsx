@@ -4,12 +4,12 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, Timestamp} from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, DollarSign, Star, Car, Loader2, AlertTriangle } from "lucide-react";
+import { MapPin, CalendarDays, DollarSign, Star, Loader2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from 'date-fns';

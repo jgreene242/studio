@@ -6,9 +6,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation"; 
-import { useAuth } from "@/context/AuthContext"; 
-import { useToast } from "@/hooks/use-toast"; 
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/context/AuthContext";
 import { Chrome, Lock, Loader2 } from 'lucide-react'; 
 
 const formSchema = z.object({
@@ -32,7 +30,6 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signInWithEmail, signInWithGoogle, loading } = useAuth();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -114,7 +111,7 @@ export default function LoginForm() {
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/auth/register" className="font-medium text-primary hover:underline">
             Sign up
           </Link>

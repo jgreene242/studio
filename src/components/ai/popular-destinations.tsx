@@ -18,7 +18,7 @@ export default function PopularDestinations({ onDestinationSelect }: PopularDest
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]); // Placeholder for recent searches
+  const [recentSearches] = useState<string[]>([]);
 
   const handleFetchSuggestions = async () => {
     if (!userLocation) {
@@ -44,8 +44,8 @@ export default function PopularDestinations({ onDestinationSelect }: PopularDest
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // For simplicity, we're not reverse geocoding here.
+        () => {
+          // For simplicity, we're not reverse geocoding here directly.
           // In a real app, you'd convert lat/lng to a city name.
           // For now, let's use a placeholder if geolocation is available.
           // Or better, let the user know we got their coords.

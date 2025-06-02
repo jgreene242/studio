@@ -36,8 +36,6 @@ export default function ProfilePage() {
   const { user, initialLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [userData, setUserData] = useState<z.infer<typeof profileSchema> | null>(null);
-  const [initialDataLoading, setInitialDataLoading] = useState(true);
 
 
   const form = useForm<z.infer<typeof profileSchema>>({
@@ -53,23 +51,20 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
-        try {
-          setInitialDataLoading(true);
-          const userDocRef = doc(db, "users", user.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const dbData = userDoc.data();
-            const combinedData = {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const dbData = userDoc.data();
+          const combinedData = {
               name: user.displayName || dbData.name || "",
               email: user.email || dbData.email || "",
               phone: dbData.phone || "",
               profilePictureUrl: user.photoURL || dbData.profilePictureUrl || "",
             };
-            setUserData(combinedData);
             form.reset(combinedData);
           } else {
             // If no Firestore doc, create one based on Auth user
-             const initialData = {
+            const initialData = {
               name: user.displayName || "",
               email: user.email || "",
               phone: user.phoneNumber || "",
@@ -80,26 +75,15 @@ export default function ProfilePage() {
               uid: user.uid, 
               createdAt: new Date() // Or serverTimestamp if creating new
             });
-            setUserData(initialData);
             form.reset(initialData);
             toast({ title: "Profile Initialized", description: "Your profile has been set up." });
           }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          toast({ variant: "destructive", title: "Error", description: "Could not load your profile data." });
-        } finally {
-          setInitialDataLoading(false);
-        }
       }
     };
 
     if (!authLoading && user) {
       fetchUserData();
-    } else if (!authLoading && !user) {
-      // Handle case where user is not logged in (though app layout should prevent this)
-      setInitialDataLoading(false);
     }
-  }, [user, authLoading, form, toast]);
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
@@ -124,7 +108,6 @@ export default function ProfilePage() {
         profilePictureUrl: values.profilePictureUrl || "",
       });
 
-      setUserData(values); // Update local state
       toast({ title: "Profile Updated", description: "Your profile has been successfully updated." });
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -134,7 +117,7 @@ export default function ProfilePage() {
     }
   }
 
-  if (authLoading || initialDataLoading) {
+  if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />

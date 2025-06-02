@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "Paradise Rides SQL"
+location: "us-east1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "Rides Database"
+      cloudSql:
+        instanceId: "Paradise CloudSQL"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

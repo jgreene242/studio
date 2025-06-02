@@ -58,13 +58,13 @@ export default function SupportPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-xl font-headline">Contact Us</CardTitle>
-          <CardDescription>If you can't find an answer in the FAQs, please reach out.</CardDescription>
+          <CardDescription>If you can&apos;t find an answer in the FAQs, please reach out.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <p className="text-muted-foreground">
                 For urgent issues, please use the in-app SOS feature during a ride or contact emergency services if necessary. For other support inquiries:
             </p>
-          <Button asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground" >
             <Link href="mailto:support@dispatchnow.example.com">
               <Mail className="w-4 h-4 mr-2" /> Email Support
             </Link>
@@ -72,7 +72,7 @@ export default function SupportPage() {
           {/* Placeholder for in-app chat or phone support */}
           <p className="text-xs text-muted-foreground">
             In-app chat support will be available soon.
-          </p>
+          </p >
         </CardContent>
       </Card>
     </div>

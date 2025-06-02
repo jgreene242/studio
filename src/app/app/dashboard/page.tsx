@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Keep useState, useEffect
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import DestinationInputForm from '@/components/ride/destination-input-form';
+import DestinationInputForm from '@/components/ride/destination-input-form'; // Keep DestinationInputForm
 import VehicleSelector from '@/components/ride/vehicle-selector';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'; // Keep CardHeader, CardTitle, CardDescription
 import { Separator } from '@/components/ui/separator';
 import { CreditCard, DollarSign, Zap, Loader2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   const [rideDetails, setRideDetails] = useState<RideDetails | null>(null);
   const { user, initialLoading: authInitialLoading } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
+
   const { toast } = useToast();
   const [isConfirmingRide, setIsConfirmingRide] = useState(false);
 

@@ -7,8 +7,6 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation"; 
 import { useAuth } from "@/context/AuthContext"; 
-import { useToast } from "@/hooks/use-toast";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -37,7 +35,6 @@ export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signUpWithEmail, signInWithGoogle, loading } = useAuth();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

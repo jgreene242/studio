@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Image from 'next/image';
 import { MapPin, Clock, User, Car, Phone, MessageSquare, AlertTriangle, Share2, Loader2 } from "lucide-react";
-import { doc, getDoc, onSnapshot, Timestamp } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore'; // Removed getDoc and Timestamp
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';

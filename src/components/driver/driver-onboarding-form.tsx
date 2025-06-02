@@ -5,9 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react"; 
+import { useState } from "react"; // Added this import
 
 import { Button } from "@/components/ui/button";
 import {
@@ -55,8 +53,6 @@ const onboardingSchema = z.object({
 });
 
 export default function DriverOnboardingForm() {
-  const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof onboardingSchema>>({
@@ -86,14 +82,12 @@ export default function DriverOnboardingForm() {
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
+    // console.log("Driver onboarding data:", values); // Removed console.log
 
-    toast({
-      title: "Application Submitted!",
-      description: "Thank you for applying. We will review your information.",
-    });
     setIsLoading(false);
     // router.push('/driver/dashboard'); // Or a "pending approval" page
     form.reset();
+    // toast({ title: "Application Submitted!", description: "We will review your application and get back to you soon." });
   }
 
   return (
@@ -250,15 +244,15 @@ export default function DriverOnboardingForm() {
                 <FormField
                   control={form.control}
                   name="driversLicenseNumber"
-                  render={({ field }) => (
+                  render={({ field }) => (	
                     <FormItem>
-                      <FormLabel>Driver's License Number</FormLabel>
+                      <FormLabel>Driver&apos;s License Number</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter license number" {...field} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}
+                  )}	
                 />
                 <FormField
                   control={form.control}
@@ -282,7 +276,7 @@ export default function DriverOnboardingForm() {
             <section>
               <h3 className="text-lg font-semibold mb-3 border-b pb-2 flex items-center"><UploadCloud className="mr-2 h-5 w-5 text-accent" />Document Uploads</h3>
               <FormDescription className="mb-4">
-                Please upload clear copies of the following documents. Max file size 5MB each. (Actual upload functionality to be implemented)
+                Please upload clear copies of the following documents. Max file size 5MB each. (Actual upload functionality to be implemented).
               </FormDescription>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
@@ -290,7 +284,7 @@ export default function DriverOnboardingForm() {
                   name="licenseDocument"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Driver's License Copy</FormLabel>
+                      <FormLabel>Driver&apos;s License Copy</FormLabel>
                       <FormControl>
                         <Input type="file" accept="image/*,.pdf" onChange={(e) => field.onChange(e.target.files)} disabled={isLoading} />
                       </FormControl>
@@ -301,7 +295,7 @@ export default function DriverOnboardingForm() {
                 <FormField
                   control={form.control}
                   name="vehicleRegistrationDocument"
-                  render={({ field }) => (
+                  render={({ field }) => (	
                     <FormItem>
                       <FormLabel>Vehicle Registration Copy</FormLabel>
                       <FormControl>
@@ -343,5 +337,3 @@ export default function DriverOnboardingForm() {
     </Card>
   );
 }
-
-

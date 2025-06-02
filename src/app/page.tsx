@@ -81,8 +81,8 @@ export default function HomePage() {
                     </div>
                     <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
                          <Image 
-                            src="https://placehold.co/600x400.png" 
-                            alt="Comfortable taxi ride" 
+                            src="https://images.unsplash.com/photo-1591068594901-26711816369a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZHJpdmluZyUyMG9uJTIwdGhlJTIwaXNsYW5kfGVufDB8fHx8MTc0ODg2OTM2MXww&ixlib=rb-4.1.0&q=80&w=1080" 
+                            alt="Comfortable taxi ride in a tropical setting" 
                             fill
                             className="object-cover"
                             data-ai-hint="tropical beach taxi"

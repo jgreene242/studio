@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -20,7 +21,7 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
 
   const handleAISuggestionSelect = (selectedDestination: string) => {
     setDestination(selectedDestination);
-    setShowAISuggestions(false); 
+    setShowAISuggestions(false);
   };
 
   const detectCurrentLocation = () => {
@@ -32,7 +33,6 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
         },
         (error) => {
           console.error("Error getting location: ", error);
-          // Handle error (e.g., show a toast to the user)
           alert("Could not detect your location. Please enter it manually.");
         }
       );
@@ -40,10 +40,10 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
       alert("Geolocation is not supported by this browser.");
     }
   };
-  
+
   useEffect(() => {
     // Optionally auto-detect location on component mount
-    // detectCurrentLocation(); 
+    // detectCurrentLocation();
   }, []);
 
 
@@ -74,6 +74,11 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
                 onChange={(e) => setPickupLocation(e.target.value)}
                 required
               />
+              {pickupLocation && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => setPickupLocation('')} aria-label="Clear pickup location">
+                  <XCircle className="h-4 w-4 text-muted-foreground"/>
+                </Button>
+              )}
               <Button type="button" variant="outline" size="icon" onClick={detectCurrentLocation} aria-label="Detect current location">
                 <LocateFixed className="h-4 w-4" />
               </Button>
@@ -82,7 +87,7 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
 
           <div className="space-y-2">
             <Label htmlFor="destination">Destination</Label>
-             <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Input
                 id="destination"
                 placeholder="Enter destination address"
@@ -104,7 +109,7 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
             </Button>
             {showAISuggestions && <PopularDestinations onDestinationSelect={handleAISuggestionSelect} />}
           </div>
-          
+
           {/* Placeholder for Map */}
           <div className="mt-4 space-y-2">
             <Label>Map Preview</Label>

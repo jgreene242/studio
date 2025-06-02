@@ -8,79 +8,80 @@ body {
 
 @layer base {
   :root {
-    --background: 230 56% 95%; /* #E8EAF6 */
-    --foreground: 231 56% 25%; /* Darker Indigo for text on light blue */
-    --muted: 230 50% 90%; /* Lighter shade of background */
-    --muted-foreground: 231 40% 55%; /* Mid-tone Indigo */
+    --background: 45 50% 96%; /* Pale Sand */
+    --foreground: 190 60% 25%; /* Dark Teal */
+    --muted: 180 30% 92%; /* Pale Aqua */
+    --muted-foreground: 190 50% 45%; /* Medium Teal */
     --popover: 0 0% 100%; /* White */
-    --popover-foreground: 231 56% 25%;
+    --popover-foreground: 190 60% 25%;
     --card: 0 0% 100%; /* White */
-    --card-foreground: 231 56% 25%;
-    --border: 231 40% 82%; /* Light Indigo border */
-    --input: 231 40% 88%; /* Slightly lighter for input background */
-    --primary: 231 48% 48%; /* #3F51B5 */
-    --primary-foreground: 0 0% 98%; /* Almost white */
-    --secondary: 231 48% 70%; /* Lighter primary */
-    --secondary-foreground: 231 48% 20%; /* Darker for text on secondary */
-    --accent: 260 100% 77%; /* #B388FF */
-    --accent-foreground: 260 100% 15%; /* Dark text for bright accent */
+    --card-foreground: 190 60% 25%;
+    --border: 180 30% 80%; /* Light Aqua Border */
+    --input: 180 30% 88%; /* Lighter Aqua for input background */
+    --primary: 175 70% 40%; /* Turquoise */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 170 60% 70%; /* Light Turquoise/Aqua */
+    --secondary-foreground: 175 70% 20%; /* Darker text for secondary */
+    --accent: 35 100% 65%; /* Sunny Orange/Yellow */
+    --accent-foreground: 35 100% 15%; /* Dark text for bright accent */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --ring: 231 48% 48%; /* Primary color */
+    --ring: 175 70% 40%; /* Primary color */
     --radius: 0.5rem;
 
-    --chart-1: 231 48% 48%;
-    --chart-2: 260 100% 77%;
-    --chart-3: 197 37% 44%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 175 70% 40%; /* Primary Turquoise */
+    --chart-2: 35 100% 65%; /* Accent Sunny Orange/Yellow */
+    --chart-3: 200 70% 50%; /* Sky Blue */
+    --chart-4: 145 60% 45%; /* Leafy Green */
+    --chart-5: 25 90% 60%;  /* Coral */
 
-    /* Sidebar specific vars (can be adjusted if a sidebar is used) */
-    --sidebar-background: 231 54% 40%; /* Indigo 700 */
-    --sidebar-foreground: 230 60% 95%; /* Almost white */
-    --sidebar-primary: 260 100% 77%; /* Accent color */
-    --sidebar-primary-foreground: 260 100% 15%; /* Dark purple for text on accent */
-    --sidebar-accent: 231 54% 50%; /* Hover color */
-    --sidebar-accent-foreground: 230 60% 98%;
-    --sidebar-border: 231 54% 30%;
-    --sidebar-ring: 260 100% 77%;
+    /* Sidebar specific vars */
+    --sidebar-background: 180 60% 35%; /* Medium Aqua/Teal */
+    --sidebar-foreground: 45 50% 96%; /* Pale Yellow/Sand text */
+    --sidebar-primary: 35 100% 65%; /* Accent Sunny Orange/Yellow */
+    --sidebar-primary-foreground: 35 100% 15%; /* Dark text on accent */
+    --sidebar-accent: 180 60% 45%; /* Hover color - slightly lighter teal */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 180 60% 25%;
+    --sidebar-ring: 35 100% 65%;
   }
 
   .dark {
-    --background: 231 30% 15%; /* Dark Indigo */
-    --foreground: 230 50% 90%; /* Light Indigo text */
-    --muted: 231 30% 25%;
-    --muted-foreground: 231 30% 60%;
-    --popover: 231 30% 12%;
-    --popover-foreground: 230 50% 90%;
-    --card: 231 30% 18%;
-    --card-foreground: 230 50% 90%;
-    --border: 231 30% 30%;
-    --input: 231 30% 22%;
-    --primary: 231 48% 55%; /* Lighter primary for dark mode */
-    --primary-foreground: 231 50% 15%; /* Dark text on lighter primary */
-    --secondary: 231 48% 35%;
-    --secondary-foreground: 230 50% 90%;
-    --accent: 260 100% 70%;
-    --accent-foreground: 0 0% 98%;
+    --background: 190 70% 12%; /* Deep Dark Teal/Ocean Blue */
+    --foreground: 180 40% 90%; /* Light Aqua/Cyan text */
+    --muted: 190 60% 20%;
+    --muted-foreground: 180 40% 60%;
+    --popover: 190 70% 10%;
+    --popover-foreground: 180 40% 90%;
+    --card: 190 70% 15%;
+    --card-foreground: 180 40% 90%;
+    --border: 190 60% 25%;
+    --input: 190 60% 22%;
+    --primary: 175 70% 50%; /* Brighter Turquoise */
+    --primary-foreground: 190 70% 10%; /* Very dark text on lighter primary */
+    --secondary: 170 60% 30%;
+    --secondary-foreground: 180 40% 90%;
+    --accent: 35 100% 70%; /* Still vibrant Sunny Orange/Yellow */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
-    --ring: 231 48% 55%;
+    --ring: 175 70% 50%;
 
-    --chart-1: 231 48% 55%;
-    --chart-2: 260 100% 70%;
-    --chart-3: 197 37% 54%;
-    --chart-4: 43 74% 76%;
-    --chart-5: 27 87% 77%;
+    --chart-1: 175 70% 50%;
+    --chart-2: 35 100% 70%;
+    --chart-3: 200 70% 60%;
+    --chart-4: 145 60% 55%;
+    --chart-5: 25 90% 70%;
 
-    --sidebar-background: 231 30% 12%;
-    --sidebar-foreground: 230 50% 85%;
-    --sidebar-primary: 260 100% 70%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 231 30% 20%;
-    --sidebar-accent-foreground: 230 50% 90%;
-    --sidebar-border: 231 30% 25%;
-    --sidebar-ring: 260 100% 70%;
+    /* Dark Sidebar specific vars */
+    --sidebar-background: 190 70% 10%; /* Very Dark Teal/Ocean Blue */
+    --sidebar-foreground: 180 40% 85%; /* Light Aqua/Cyan text */
+    --sidebar-primary: 35 100% 70%; /* Accent Sunny Orange/Yellow */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 190 70% 18%; /* Hover color - slightly lighter dark teal */
+    --sidebar-accent-foreground: 180 40% 90%;
+    --sidebar-border: 190 70% 20%;
+    --sidebar-ring: 35 100% 70%;
   }
 }
 

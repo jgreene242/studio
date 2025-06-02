@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,38 +17,149 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Edit3 } from "lucide-react";
+import { User, Edit3, Loader2, ShieldAlert } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { updateProfile as updateFirebaseProfile } from "firebase/auth";
+import { db, auth } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
-  email: z.string().email("Invalid email address."),
-  phone: z.string().optional(), // Add phone validation if needed, e.g. .regex(/^\+[1-9]\d{1,14}$/)
+  email: z.string().email("Invalid email address.").readonly(), // Email should not be editable here
+  phone: z.string().optional(),
   profilePictureUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export default function ProfilePage() {
-  // Placeholder data - replace with actual user data
-  const currentUser = {
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    phone: "+15551234567",
-    profilePictureUrl: "https://placehold.co/100x100.png",
-  };
+  const { user, initialLoading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+  const [userData, setUserData] = useState<z.infer<typeof profileSchema> | null>(null);
+  const [initialDataLoading, setInitialDataLoading] = useState(true);
+
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: currentUser.name || "",
-      email: currentUser.email || "",
-      phone: currentUser.phone || "",
-      profilePictureUrl: currentUser.profilePictureUrl || "",
+      name: "",
+      email: "",
+      phone: "",
+      profilePictureUrl: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof profileSchema>) {
-    // TODO: Implement profile update logic
-    console.log("Profile updated:", values);
-    alert("Profile updated successfully!");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        try {
+          setInitialDataLoading(true);
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const dbData = userDoc.data();
+            const combinedData = {
+              name: user.displayName || dbData.name || "",
+              email: user.email || dbData.email || "",
+              phone: dbData.phone || "",
+              profilePictureUrl: user.photoURL || dbData.profilePictureUrl || "",
+            };
+            setUserData(combinedData);
+            form.reset(combinedData);
+          } else {
+            // If no Firestore doc, create one based on Auth user
+             const initialData = {
+              name: user.displayName || "",
+              email: user.email || "",
+              phone: user.phoneNumber || "",
+              profilePictureUrl: user.photoURL || "",
+            };
+            await setDoc(userDocRef, { 
+              ...initialData, 
+              uid: user.uid, 
+              createdAt: new Date() // Or serverTimestamp if creating new
+            });
+            setUserData(initialData);
+            form.reset(initialData);
+            toast({ title: "Profile Initialized", description: "Your profile has been set up." });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          toast({ variant: "destructive", title: "Error", description: "Could not load your profile data." });
+        } finally {
+          setInitialDataLoading(false);
+        }
+      }
+    };
+
+    if (!authLoading && user) {
+      fetchUserData();
+    } else if (!authLoading && !user) {
+      // Handle case where user is not logged in (though app layout should prevent this)
+      setInitialDataLoading(false);
+    }
+  }, [user, authLoading, form, toast]);
+
+  async function onSubmit(values: z.infer<typeof profileSchema>) {
+    if (!user) {
+      toast({ variant: "destructive", title: "Error", description: "You are not logged in." });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      // Update Firebase Auth profile
+      if (auth.currentUser && (auth.currentUser.displayName !== values.name || auth.currentUser.photoURL !== values.profilePictureUrl)) {
+        await updateFirebaseProfile(auth.currentUser, {
+          displayName: values.name,
+          photoURL: values.profilePictureUrl || null, // Pass null if empty string
+        });
+      }
+
+      // Update Firestore document
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, {
+        name: values.name,
+        phone: values.phone || "",
+        profilePictureUrl: values.profilePictureUrl || "",
+      });
+
+      setUserData(values); // Update local state
+      toast({ title: "Profile Updated", description: "Your profile has been successfully updated." });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({ variant: "destructive", title: "Update Failed", description: "Could not update your profile." });
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  if (authLoading || initialDataLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto text-center">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-headline text-destructive flex items-center justify-center">
+              <ShieldAlert className="mr-2 h-7 w-7" /> Access Denied
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Please log in to view your profile.</p>
+            <Button asChild className="mt-4">
+              <a href="/auth/login">Go to Login</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -73,12 +186,14 @@ export default function ProfilePage() {
                       <Input type="file" accept="image/*" className="text-sm max-w-xs" onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                            // For demo, just logging. In real app, upload and set URL.
-                           console.log(e.target.files[0].name);
+                           console.log("File selected:", e.target.files[0].name);
                            // field.onChange(URL.createObjectURL(e.target.files[0])); // This is temporary for preview
+                           // TODO: Implement actual file upload logic and update field.value with the new URL
+                           toast({title: "Note", description: "Profile picture upload is a demo. Actual upload needs to be implemented."})
                         }
-                      }}/>
+                      }} disabled={isSaving}/>
                     </FormControl>
-                     <FormDescription className="text-center">Upload a new profile picture.</FormDescription>
+                     <FormDescription className="text-center">Upload a new profile picture. (Upload logic not yet implemented)</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -91,7 +206,7 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" {...field} />
+                      <Input placeholder="Your full name" {...field} disabled={isSaving} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -104,10 +219,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} />
+                      <Input type="email" placeholder="your.email@example.com" {...field} readOnly disabled={isSaving} />
                     </FormControl>
                      <FormDescription>
-                        This email is used for login and communication.
+                        Your email address cannot be changed here.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -120,14 +235,15 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Phone Number (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
+                      <Input type="tel" placeholder="+1 (555) 123-4567" {...field} disabled={isSaving} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Edit3 className="mr-2 h-4 w-4" /> Update Profile
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isSaving}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Edit3 className="mr-2 h-4 w-4" />}
+                {isSaving ? "Saving..." : "Update Profile"}
               </Button>
             </form>
           </Form>
@@ -136,3 +252,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

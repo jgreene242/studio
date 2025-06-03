@@ -1,0 +1,49 @@
+mutation CreateUser @auth(level: PUBLIC) {
+  user_insert(data: {email: "newuser@example.com", password: "securepassword", userType: "tourist"})
+}
+
+query ListAvailableDrivers @auth(level: USER) {
+  drivers(where: {isAvailable: {eq: true}}) {
+    id
+    user {
+      displayName
+      phoneNumber
+    }
+    vehicleDetails
+  }
+}
+
+mutation RequestRide($touristId: UUID!, $pickupLocation: String!, $dropoffLocation: String!) @auth(level: USER) {
+  ride_insert(data: {touristId: $touristId, pickupLocation: $pickupLocation, dropoffLocation: $dropoffLocation, requestedAt_expr: "request.time", status: "requested"})
+}
+
+mutation SubmitRideRating($rideId: UUID!, $rating: Int!, $review: String!) @auth(level: USER) {
+  rideRating_insert(data: {rideId: $rideId, touristId_expr: "auth.uid", driverId: "00000000-0000-0000-0000-000000000000", rating: $rating, review: $review})
+}
+
+query GetRideHistoryForTourist @auth(level: USER) {
+  rides(where: {touristId: {eq_expr: "auth.uid"}}) {
+    id
+    pickupLocation
+    dropoffLocation
+    requestedAt
+    status
+    driver {
+      user {
+        displayName
+      }
+    }
+  }
+}
+
+mutation UpdateDriverAvailability($driverId: UUID!, $isAvailable: Boolean!) @auth(level: USER) {
+  driver_update(id: $driverId, data: {isAvailable: $isAvailable})
+}
+
+query ListAllUsers @auth(expr: "auth.token.admin == true") {
+  users {
+    id
+    email
+    userType
+  }
+}

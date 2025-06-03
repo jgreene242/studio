@@ -1,12 +1,12 @@
 specVersion: "v1"
-serviceId: "Paradise Rides SQL"
+serviceId: "dispatchnow-9flvh-service"
 location: "us-east1"
 schema:
   source: "./schema"
   datasource:
     postgresql:
-      database: "Rides Database"
+      database: "dispatchnow-9flvh-database"
       cloudSql:
-        instanceId: "Paradise CloudSQL"
+        instanceId: "dispatchnow-9flvh-instance"
       # schemaValidation: "COMPATIBLE"
 connectorDirs: ["./connector"]

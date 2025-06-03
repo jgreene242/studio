@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import PopularDestinations from '@/components/ai/popular-destinations';
-import Image from 'next/image';
+import GoogleMapDisplay from '@/components/maps/google-map-display'; // Import the new map component
 import { MapPin, Search, LocateFixed, XCircle } from 'lucide-react';
 
 
@@ -19,18 +19,24 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [mapCenter, setMapCenter] = useState({ lat: 20, lng: 0 }); // Default center
+  const [mapZoom, setMapZoom] = useState(2); // Default zoom
 
   const handleAISuggestionSelect = (selectedDestination: string) => {
     setDestination(selectedDestination);
     setShowAISuggestions(false);
+    // Potentially update map center based on selected destination (requires geocoding)
   };
 
   const detectCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // In a real app, you would use reverse geocoding here
-          setPickupLocation(`Current Location (Lat: ${position.coords.latitude.toFixed(3)}, Lng: ${position.coords.longitude.toFixed(3)})`);
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setPickupLocation(`Current Location (Lat: ${lat.toFixed(3)}, Lng: ${lng.toFixed(3)})`);
+          setMapCenter({ lat, lng });
+          setMapZoom(12); // Zoom in when location is detected
         },
         (error) => {
           console.error("Error getting location: ", error);
@@ -111,13 +117,14 @@ export default function DestinationInputForm({ onDestinationSet }: DestinationIn
             {showAISuggestions && <PopularDestinations onDestinationSelect={handleAISuggestionSelect} />}
           </div>
 
-          {/* Placeholder for Map */}
           <div className="mt-4 space-y-2">
             <Label>Map Preview</Label>
-            <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center overflow-hidden border">
-              <Image src="https://placehold.co/800x450.png" alt="Map placeholder" width={800} height={450} data-ai-hint="map city streets" className="object-cover"/>
+            <div className="w-full bg-muted rounded-md overflow-hidden">
+              <GoogleMapDisplay center={mapCenter} zoom={mapZoom} />
             </div>
-            <p className="text-xs text-muted-foreground text-center">Map functionality will be available soon.</p>
+            <p className="text-xs text-muted-foreground text-center">
+              {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? 'Map preview.' : 'Configure Google Maps API Key to see map.'}
+            </p>
           </div>
 
 

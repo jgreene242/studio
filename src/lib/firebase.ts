@@ -27,9 +27,14 @@ let perf: FirebasePerformance | undefined;
 if (typeof window !== 'undefined') {
   // Initialize App Check
   if (process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY) {
-    appCheck = initializeAppCheck(app, {
+    initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY),
       isTokenAutoRefreshEnabled: true,
+    }).then(resolvedAppCheck => {
+      appCheck = resolvedAppCheck;
+      console.log("Firebase App Check initialized successfully.");
+    }).catch(error => {
+      console.error("Firebase App Check initialization error:", error);
     });
   } else {
     console.warn("App Check not initialized: NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY is not set.");
@@ -38,12 +43,26 @@ if (typeof window !== 'undefined') {
   // Initialize Analytics
   isAnalyticsSupported().then((supported) => {
     if (supported) {
-      analytics = getAnalytics(app);
+      try {
+        analytics = getAnalytics(app);
+        console.log("Firebase Analytics initialized.");
+      } catch (error) {
+        console.error("Error initializing Firebase Analytics inside supported check:", error);
+      }
+    } else {
+      console.log("Firebase Analytics is not supported in this environment.");
     }
+  }).catch(error => {
+    console.error("Error checking Firebase Analytics support:", error);
   });
 
   // Initialize Performance Monitoring
-  perf = getPerformance(app);
+  try {
+    perf = getPerformance(app);
+    console.log("Firebase Performance Monitoring initialized.");
+  } catch (error) {
+    console.error("Error initializing Firebase Performance Monitoring:", error);
+  }
 }
 
 export { app, auth, db, appCheck, analytics, perf };

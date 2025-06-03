@@ -29,6 +29,8 @@ interface RideDetails {
   status?: string;
   passengerRating?: number;
   passengerFeedback?: string;
+  licensePlate?: string; // Added from track page for consistency
+  paymentMethod?: string; // Added for potential display
 }
 
 export default function RideSummaryPage() {
@@ -87,7 +89,11 @@ export default function RideSummaryPage() {
           setIsLoading(false);
         }
       };
-      fetchRideDetails();
+      fetchRideDetails().catch(e => {
+        console.error("Error calling fetchRideDetails in RideSummaryPage:", e);
+        setError("An unexpected error occurred while trying to fetch ride details.");
+        setIsLoading(false);
+      });
     }
   }, [rideId, user, authLoading]);
 
@@ -113,7 +119,8 @@ export default function RideSummaryPage() {
       setIsFeedbackSubmitted(true);
     } catch (error) {
         console.error("Error submitting feedback:", error);
-        toast({variant: "destructive", title: "Submission Failed", description: "Could not submit your feedback. Please try again."});
+        const errorMessage = error instanceof Error ? error.message : "Could not submit your feedback. Please try again.";
+        toast({variant: "destructive", title: "Submission Failed", description: errorMessage});
     } finally {
         setIsSubmittingFeedback(false);
     }
@@ -290,4 +297,3 @@ export default function RideSummaryPage() {
     </div>
   );
 }
-

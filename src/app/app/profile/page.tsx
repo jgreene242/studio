@@ -52,38 +52,47 @@ export default function ProfilePage() {
     const fetchUserData = async () => {
       if (user) {
         const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const dbData = userDoc.data();
-          const combinedData = {
-              name: user.displayName || dbData.name || "",
-              email: user.email || dbData.email || "",
-              phone: dbData.phone || "",
-              profilePictureUrl: user.photoURL || dbData.profilePictureUrl || "",
-            };
-            form.reset(combinedData);
-          } else {
-            // If no Firestore doc, create one based on Auth user
-            const initialData = {
-              name: user.displayName || "",
-              email: user.email || "",
-              phone: user.phoneNumber || "",
-              profilePictureUrl: user.photoURL || "",
-            };
-            await setDoc(userDocRef, { 
-              ...initialData, 
-              uid: user.uid, 
-              createdAt: new Date() // Or serverTimestamp if creating new
-            });
-            form.reset(initialData);
-            toast({ title: "Profile Initialized", description: "Your profile has been set up." });
-          }
+        try {
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const dbData = userDoc.data();
+            const combinedData = {
+                name: user.displayName || dbData.name || "",
+                email: user.email || dbData.email || "",
+                phone: dbData.phone || "",
+                profilePictureUrl: user.photoURL || dbData.profilePictureUrl || "",
+              };
+              form.reset(combinedData);
+            } else {
+              // If no Firestore doc, create one based on Auth user
+              const initialData = {
+                name: user.displayName || "",
+                email: user.email || "",
+                phone: user.phoneNumber || "",
+                profilePictureUrl: user.photoURL || "",
+              };
+              await setDoc(userDocRef, { 
+                ...initialData, 
+                uid: user.uid, 
+                createdAt: new Date() // Or serverTimestamp if creating new
+              });
+              form.reset(initialData);
+              toast({ title: "Profile Initialized", description: "Your profile has been set up." });
+            }
+        } catch (e) {
+          console.error("Error fetching user data for profile:", e);
+          toast({ variant: "destructive", title: "Profile Load Failed", description: "Could not load your profile data." });
+        }
       }
     };
 
     if (!authLoading && user) {
-      fetchUserData();
+      fetchUserData().catch(e => {
+         console.error("Unhandled error in fetchUserData (ProfilePage):", e);
+         toast({ variant: "destructive", title: "Error", description: "Failed to load profile data due to an unexpected error." });
+      });
     }
+  }, [user, authLoading, form, toast]);
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
@@ -96,7 +105,7 @@ export default function ProfilePage() {
       if (auth.currentUser && (auth.currentUser.displayName !== values.name || auth.currentUser.photoURL !== values.profilePictureUrl)) {
         await updateFirebaseProfile(auth.currentUser, {
           displayName: values.name,
-          photoURL: values.profilePictureUrl || null, // Pass null if empty string
+          photoURL: values.profilePictureUrl || null, 
         });
       }
 
@@ -111,7 +120,8 @@ export default function ProfilePage() {
       toast({ title: "Profile Updated", description: "Your profile has been successfully updated." });
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast({ variant: "destructive", title: "Update Failed", description: "Could not update your profile." });
+      const errorMessage = error instanceof Error ? error.message : "Could not update your profile.";
+      toast({ variant: "destructive", title: "Update Failed", description: errorMessage });
     } finally {
       setIsSaving(false);
     }
@@ -165,12 +175,8 @@ export default function ProfilePage() {
                       <AvatarFallback><User className="w-10 h-10" /></AvatarFallback>
                     </Avatar>
                     <FormControl>
-                       {/* Basic file input, in real app use a proper upload component */}
                       <Input type="file" accept="image/*" className="text-sm max-w-xs" onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
-                           // For demo, just logging. In real app, upload and set URL.
-                           // field.onChange(URL.createObjectURL(e.target.files[0])); // This is temporary for preview
-                           // TODO: Implement actual file upload logic and update field.value with the new URL
                            toast({title: "Note", description: "Profile picture upload is a demo. Actual upload needs to be implemented."})
                         }
                       }} disabled={isSaving}/>
@@ -234,5 +240,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    

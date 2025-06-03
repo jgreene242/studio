@@ -40,13 +40,10 @@ export default function RideHistoryPage() {
 
   useEffect(() => {
     if (authLoading) {
-      // Wait for auth state to be determined
       return;
     }
     if (!user) {
       setIsLoading(false);
-      // Optionally redirect to login or show a message
-      // setError("Please log in to view your ride history.");
       return;
     }
 
@@ -74,7 +71,11 @@ export default function RideHistoryPage() {
       }
     };
 
-    fetchRides();
+    fetchRides().catch(e => {
+        console.error("Error calling fetchRides in RideHistoryPage:", e);
+        setError("An unexpected error occurred while trying to fetch ride history.");
+        setIsLoading(false);
+    });
   }, [user, authLoading]);
 
   const formatDate = (timestamp: Timestamp | undefined) => {
@@ -193,4 +194,3 @@ export default function RideHistoryPage() {
     </div>
   );
 }
-

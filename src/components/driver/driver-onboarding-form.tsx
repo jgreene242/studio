@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'; // Enabled
-import { useToast } from "@/hooks/use-toast"; // Enabled
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,8 +56,8 @@ const onboardingSchema = z.object({
 
 export default function DriverOnboardingForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter(); // Enabled
-  const { toast } = useToast(); // Enabled
+  const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof onboardingSchema>>({
     resolver: zodResolver(onboardingSchema),
@@ -78,20 +78,26 @@ export default function DriverOnboardingForm() {
 
   async function onSubmit(values: z.infer<typeof onboardingSchema>) {
     setIsLoading(true);
-    // TODO: Implement actual driver registration logic:
-    // 1. Create Firebase Auth user (if not linking to existing passenger account)
-    // 2. Upload documents to Firebase Storage, get download URLs
-    // 3. Save driver details (including document URLs) to Firestore 'drivers' collection
-    
+    try {
+      // TODO: Implement actual driver registration logic:
+      // 1. Create Firebase Auth user (if not linking to existing passenger account)
+      // 2. Upload documents to Firebase Storage, get download URLs
+      // 3. Save driver details (including document URLs) to Firestore 'drivers' collection
+      
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
 
-    setIsLoading(false);
-    router.push('/driver/dashboard'); // Enabled - Or a "pending approval" page
-    form.reset();
-    toast({ title: "Application Submitted!", description: "We will review your application and get back to you soon." }); // Enabled
+      router.push('/driver/dashboard');
+      form.reset();
+      toast({ title: "Application Submitted!", description: "We will review your application and get back to you soon." });
+    } catch (error) {
+      console.error("Error during driver onboarding submission:", error);
+      toast({ variant: "destructive", title: "Submission Error", description: "An unexpected error occurred while submitting your application." });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (

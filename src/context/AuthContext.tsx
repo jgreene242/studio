@@ -9,10 +9,10 @@ import {
   signInWithEmailAndPassword, 
   signOut as firebaseSignOut,
   updateProfile,
-  GoogleAuthProvider, // Added
-  signInWithPopup      // Added
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore'; // Added getDoc
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,7 +22,7 @@ interface AuthContextType {
   initialLoading: boolean;
   signUpWithEmail: (name: string, email: string, pass: string) => Promise<User | null>;
   signInWithEmail: (email: string, pass: string) => Promise<User | null>;
-  signInWithGoogle: () => Promise<User | null>; // Added
+  signInWithGoogle: () => Promise<User | null>;
   appSignOut: () => Promise<void>;
 }
 
@@ -64,9 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Registration Successful", description: "Welcome to Paradise Rides!" });
       return userCredential.user;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Sign up error:", error);
-      toast({ variant: "destructive", title: "Registration Failed", description: error.message });
+      let description = "An unexpected error occurred during registration.";
+      if (error.code === 'auth/email-already-in-use') {
+        description = "This email address is already in use. Please try a different email or log in.";
+      } else if (error.message) {
+        description = error.message;
+      }
+      toast({ variant: "destructive", title: "Registration Failed", description });
       return null;
     } finally {
       setLoading(false);
@@ -80,9 +86,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Login Successful", description: "Welcome back!" });
       return userCredential.user;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Sign in error:", error);
-      toast({ variant: "destructive", title: "Login Failed", description: error.message });
+      let description = "An unexpected error occurred during login. Please try again.";
+      if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+        description = "Invalid email or password. Please check your credentials and try again.";
+      } else if (error.code === "auth/user-disabled") {
+        description = "This account has been disabled. Please contact support.";
+      } else if (error.message) {
+        description = error.message;
+      }
+      toast({ variant: "destructive", title: "Login Failed", description });
       return null;
     } finally {
       setLoading(false);
@@ -96,11 +110,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await signInWithPopup(auth, provider);
       const googleUser = result.user;
 
-      // Check if user exists in Firestore, if not, create them
       const userDocRef = doc(db, "users", googleUser.uid);
-      const userDoc = await getDoc(userDocRef);
+      const userDocSnap = await getDoc(userDocRef);
 
-      if (!userDoc.exists()) {
+      if (!userDocSnap.exists()) {
         await setDoc(userDocRef, {
           uid: googleUser.uid,
           email: googleUser.email,
@@ -110,21 +123,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: "passenger",
         });
       }
-      // The onAuthStateChanged listener will handle setting the user state.
-      // However, we can set it here for immediate UI update if desired,
-      // but it might cause a quick flicker if onAuthStateChanged is slightly delayed.
-      // For simplicity, let onAuthStateChanged handle it, or update here:
       setUser(googleUser); 
       toast({ title: "Google Sign-In Successful", description: `Welcome, ${googleUser.displayName}!` });
       return googleUser;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Google sign in error:", error);
-      // Handle specific errors like popup closed by user
+      let description = "An unexpected error occurred during Google Sign-In.";
       if (error.code === 'auth/popup-closed-by-user') {
-        toast({ variant: "default", title: "Sign-In Cancelled", description: "Google Sign-In was cancelled." });
-      } else {
-        toast({ variant: "destructive", title: "Google Sign-In Failed", description: error.message });
+        description = "Google Sign-In was cancelled.";
+      } else if (error.message) {
+        description = error.message;
       }
+      toast({ variant: error.code === 'auth/popup-closed-by-user' ? "default" : "destructive", title: "Google Sign-In Failed", description });
       return null;
     } finally {
       setLoading(false);
@@ -138,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Sign out error:", error);
       toast({ variant: "destructive", title: "Logout Failed", description: error.message });
     } finally {

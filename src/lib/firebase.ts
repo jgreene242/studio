@@ -27,15 +27,15 @@ let perf: FirebasePerformance | undefined;
 if (typeof window !== 'undefined') {
   // Initialize App Check
   if (process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY) {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY),
-      isTokenAutoRefreshEnabled: true,
-    }).then(resolvedAppCheck => {
-      appCheck = resolvedAppCheck;
+    try {
+      appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY),
+        isTokenAutoRefreshEnabled: true,
+      });
       console.log("Firebase App Check initialized successfully.");
-    }).catch(error => {
+    } catch (error) {
       console.error("Firebase App Check initialization error:", error);
-    });
+    }
   } else {
     console.warn("App Check not initialized: NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY is not set.");
   }

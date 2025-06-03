@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Edit3, Loader2, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, serverTimestamp } from "firebase/firestore"; // Added serverTimestamp
 import { updateProfile as updateFirebaseProfile } from "firebase/auth";
 import { db, auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -57,10 +57,10 @@ export default function ProfilePage() {
           if (userDoc.exists()) {
             const dbData = userDoc.data();
             const combinedData = {
-                name: user.displayName || dbData.name || "",
-                email: user.email || dbData.email || "",
-                phone: dbData.phone || "",
-                profilePictureUrl: user.photoURL || dbData.profilePictureUrl || "",
+                name: dbData.name || user.displayName || "", // Prioritize Firestore name
+                email: user.email || "", // Email from auth is primary
+                phone: dbData.phone || user.phoneNumber || "", // Prioritize Firestore phone, fallback to auth phone
+                profilePictureUrl: dbData.profilePictureUrl || user.photoURL || "", // Prioritize Firestore pic
               };
               form.reset(combinedData);
             } else {
@@ -68,13 +68,14 @@ export default function ProfilePage() {
               const initialData = {
                 name: user.displayName || "",
                 email: user.email || "",
-                phone: user.phoneNumber || "",
+                phone: user.phoneNumber || "", // Get phone number from auth if available
                 profilePictureUrl: user.photoURL || "",
               };
-              await setDoc(userDocRef, { 
-                ...initialData, 
-                uid: user.uid, 
-                createdAt: new Date() // Or serverTimestamp if creating new
+              await setDoc(userDocRef, {
+                ...initialData,
+                uid: user.uid,
+                createdAt: serverTimestamp(), // Use serverTimestamp
+                role: "passenger", // Default role
               });
               form.reset(initialData);
               toast({ title: "Profile Initialized", description: "Your profile has been set up." });
@@ -92,7 +93,7 @@ export default function ProfilePage() {
          toast({ variant: "destructive", title: "Error", description: "Failed to load profile data due to an unexpected error." });
       });
     }
-  }, [user, authLoading, form, toast]);
+  }, [user, authLoading]); // Removed form and toast from dependencies
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
@@ -105,7 +106,7 @@ export default function ProfilePage() {
       if (auth.currentUser && (auth.currentUser.displayName !== values.name || auth.currentUser.photoURL !== values.profilePictureUrl)) {
         await updateFirebaseProfile(auth.currentUser, {
           displayName: values.name,
-          photoURL: values.profilePictureUrl || null, 
+          photoURL: values.profilePictureUrl || null,
         });
       }
 
@@ -115,6 +116,7 @@ export default function ProfilePage() {
         name: values.name,
         phone: values.phone || "",
         profilePictureUrl: values.profilePictureUrl || "",
+        // email is not updated here as it's an auth property usually managed differently
       });
 
       toast({ title: "Profile Updated", description: "Your profile has been successfully updated." });

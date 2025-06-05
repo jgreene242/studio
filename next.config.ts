@@ -2,6 +2,8 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true, // Explicitly set, good for development
+  swcMinify: true,       // Explicitly set, enables SWC for faster minification
   images: {
     remotePatterns: [
       {

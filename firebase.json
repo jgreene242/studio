@@ -1,3 +1,4 @@
+
 {
   "apphosting": [
     {
@@ -15,6 +16,7 @@
       ]
     },
     {
+      "backendId": "paradise",
       "source": ".",
       "codebase": "paradise",
       "ignore": [
@@ -22,7 +24,6 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
-        "*.local",
         "functions",
         "rides",
         ".vscode",
@@ -37,28 +38,6 @@
     {
       "backendId": "paradiserides",
       "rootDir": "rides",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    },
-    {
-      "backendId": "studio",
-      "rootDir": "Public",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    },
-    {
-      "backendId": "paradiserides",
-      "rootDir": "/rides",
       "ignore": [
         "node_modules",
         ".git",
@@ -86,8 +65,7 @@
     "source": "dataconnect"
   },
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "firestore.rules"
   },
   "database": {
     "rules": "database.rules.json"
@@ -95,7 +73,7 @@
   "hosting": {
     "rewrites": [
       {
-        "source": "/api/Node.js",
+        "source": "**",
         "apphosting": {
           "backendId": "paradise"
         }

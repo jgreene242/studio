@@ -2,20 +2,6 @@
 {
   "apphosting": [
     {
-      "backendId": "studio",
-      "rootDir": "functions",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
-      ]
-    },
-    {
       "backendId": "paradise",
       "source": ".",
       "codebase": "paradise",
@@ -36,14 +22,34 @@
       ]
     },
     {
+      "backendId": "studio",
+      "rootDir": "functions",
+      "codebase": "functions",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    },
+    {
       "backendId": "paradiserides",
       "rootDir": "rides",
+      "codebase": "paradiserides",
       "ignore": [
         "node_modules",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
         "functions"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],

@@ -2,28 +2,30 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage'; // Added FirebaseStorage type
 import { initializeAppCheck, ReCaptchaV3Provider, AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported as isAnalyticsSupported, Analytics } from 'firebase/analytics';
 import { getPerformance, FirebasePerformance } from 'firebase/performance';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAtzuBFcr-IfRyNJnozt46ZrjmGYnzJzrc",
-  authDomain: "dispatchnow-9flvh.firebaseapp.com",
-  databaseURL: "https://dispatchnow-9flvh-default-rtdb.firebaseio.com",
-  projectId: "dispatchnow-9flvh",
-  storageBucket: "dispatchnow-9flvh.firebasestorage.app",
-  messagingSenderId: "779499045423",
-  appId: "1:779499045423:web:c0e83c45d5bdae3092bcda",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app); // Initialize Firebase Storage
 
 let appCheck: AppCheck | undefined;
 let analytics: Analytics | undefined;
 let perf: FirebasePerformance | undefined;
+// No need for a separate 'let storageInstance: FirebaseStorage | undefined;' as getStorage(app) is typically called directly.
 
 if (typeof window !== 'undefined') {
   // Initialize App Check
@@ -66,4 +68,4 @@ if (typeof window !== 'undefined') {
   }
 }
 
-export { app, auth, db, appCheck, analytics, perf };
+export { app, auth, db, storage, appCheck, analytics, perf };

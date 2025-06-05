@@ -19,7 +19,7 @@ runConfig:
 # and that your App Hosting service account has permission to access them.
 env:
   - variable: GEMINI_API_KEY
-    secret: AIzaSyAFQrmfOnGPxDdKJNKQUFwHAYsXhwmValg
+    secret: AIzaSyDHBED-WvJT62vFGkAZpPiA7whgXdUjXiY
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     secret: AIzaSyAtzuBFcr-IfRyNJnozt46ZrjmGYnzJzrc
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN

@@ -7,12 +7,13 @@ import { getAnalytics, isSupported as isAnalyticsSupported, Analytics } from 'fi
 import { getPerformance, FirebasePerformance } from 'firebase/performance';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyAtzuBFcr-IfRyNJnozt46ZrjmGYnzJzrc",
+  authDomain: "dispatchnow-9flvh.firebaseapp.com",
+  databaseURL: "https://dispatchnow-9flvh-default-rtdb.firebaseio.com",
+  projectId: "dispatchnow-9flvh",
+  storageBucket: "dispatchnow-9flvh.firebasestorage.app",
+  messagingSenderId: "779499045423",
+  appId: "1:779499045423:web:c0e83c45d5bdae3092bcda",
 };
 
 // Initialize Firebase

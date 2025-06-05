@@ -1,3 +1,4 @@
+
 {
   "apphosting": [
     {
@@ -26,20 +27,56 @@
         "functions",
         "rides",
         ".vscode",
-        "Paradise Rides"
+        "Paradise Rides",
+        "dataconnect/.dataconnect"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "backendId": "paradiserides",
+      "rootDir": "exit",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
       ]
     }
   ],
   "emulators": {
     "dataconnect": {
       "dataDir": "dataconnect/.dataconnect/pgliteData"
+    },
+    "firestore": {
+      "port": "8080"
+    },
+    "auth": {
+      "port": "9099"
+    },
+    "hosting": {
+      "port": "5000"
     }
   },
   "dataconnect": {
     "source": "dataconnect"
-  }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": [
+    {
+      "target": "website-1",
+      "public": "Paradise Rides",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    }
+  ]
 }

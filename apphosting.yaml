@@ -19,23 +19,23 @@ runConfig:
 # and that your App Hosting service account has permission to access them.
 env:
   - variable: GEMINI_API_KEY
-    secret: GEMINI_API_KEY
+    secret: AIzaSyAFQrmfOnGPxDdKJNKQUFwHAYsXhwmValg
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    secret: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: AIzaSyAtzuBFcr-IfRyNJnozt46ZrjmGYnzJzrc
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    secret: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    secret: dispatchnow-9flvh.firebaseapp.com
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    secret: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    secret: dispatchnow-9flvh
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    secret: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    secret: dispatchnow-9flvh.firebasestorage.app
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-    secret: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    secret: 779499045423
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    secret: NEXT_PUBLIC_FIREBASE_APP_ID
+    secret: 1:779499045423:web:c0e83c45d5bdae3092bcda
   - variable: NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY
-    secret: NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY
+    secret: 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
   - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-    secret: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    secret: AIzaSyB0J6HgaOTEd33vqWe3UppZLokCYKpi1uI
   # Add other environment variables your application might need.
   # Example:
   # - variable: SOME_OTHER_SETTING

@@ -1,0 +1,62 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default Deny: By default, deny all reads and writes to all collections.
+    // This is a security best practice. You must explicitly grant access below.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users Collection:
+    // - Allow a user to read and update their own user document.
+    // - Allow creation if the user is creating their own document and is authenticated.
+    match /users/{userId} {
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Consider if admins should have broader access.
+    }
+
+    // Rides Collection:
+    // - Allow a passenger to create their own ride request.
+    // - Allow a passenger to read their own ride documents.
+    // - Allow a passenger to update specific fields of their ride (e.g., rating, feedback) if status allows.
+    // - Allow an assigned driver to read and update the ride they are assigned to (e.g., status).
+    // - This needs careful thought based on your app's logic for ride assignment and status flow.
+    match /rides/{rideId} {
+      allow create: if request.auth != null && request.resource.data.passengerId == request.auth.uid;
+      allow read: if request.auth != null && (
+                    resource.data.passengerId == request.auth.uid ||
+                    (resource.data.driverId != null && resource.data.driverId == request.auth.uid) // Example if driverId is stored
+                  );
+      // Example for passenger updating their feedback on a completed ride
+      allow update: if request.auth != null &&
+                       request.auth.uid == resource.data.passengerId &&
+                       resource.data.status == 'completed' &&
+                       request.resource.data.passengerRating != null &&
+                       request.resource.data.passengerFeedback != null &&
+                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['passengerId', 'driverId', 'fare', 'createdAt', 'pickupLocation', 'destinationLocation', 'vehicleId']); // Prevent changing critical fields
+
+      // Add rules for drivers updating status, etc. This will depend on how you model driver roles.
+      // Example:
+      // allow update: if request.auth != null && request.auth.uid == resource.data.driverId &&
+      //                  request.resource.data.status != resource.data.status; // Driver can only update status
+
+
+      // IMPORTANT: These are examples. You MUST refine these rules based on your exact data model and access patterns.
+      // Consider who can update what fields and under what conditions (e.g., ride status).
+      // Ensure drivers cannot access other drivers' or all passengers' rides unless intended.
+    }
+
+    // Add rules for other collections if you have them (e.g., 'drivers' for driver-specific profiles).
+
+    // Data Connect:
+    // If you are exclusively using Firebase Data Connect for some data operations,
+    // Data Connect itself has an authorization model within its schema (e.g., @auth directives).
+    // However, if clients can *also* directly access Firestore (as seen in your app),
+    // these Firestore Security Rules are still paramount.
+    // Ensure your Data Connect operations and direct Firestore access rules are harmonized.
+  }
+}

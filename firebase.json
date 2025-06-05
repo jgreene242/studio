@@ -37,7 +37,7 @@
     },
     {
       "backendId": "paradiserides",
-      "rootDir": "exit",
+      "rootDir": "rides",
       "ignore": [
         "node_modules",
         ".git",
@@ -71,15 +71,14 @@
   "database": {
     "rules": "database.rules.json"
   },
-  "hosting": [
-    {
-      "target": "website-1",
-      "public": "Paradise Rides",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ]
-    }
-  ]
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "apphosting": {
+          "backendId": "paradise"
+        }
+      }
+    ]
+  }
 }

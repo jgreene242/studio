@@ -1,4 +1,3 @@
-
 {
   "apphosting": [
     {
@@ -45,6 +44,28 @@
         "firebase-debug.*.log",
         "functions"
       ]
+    },
+    {
+      "backendId": "studio",
+      "rootDir": "Public",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ]
+    },
+    {
+      "backendId": "paradiserides",
+      "rootDir": "/rides",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ]
     }
   ],
   "emulators": {
@@ -74,7 +95,7 @@
   "hosting": {
     "rewrites": [
       {
-        "source": "**",
+        "source": "/api/Node.js",
         "apphosting": {
           "backendId": "paradise"
         }

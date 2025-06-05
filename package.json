@@ -11,6 +11,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
+  "engines": {
+    "node": "22"
+  },
   "dependencies": {
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@firebasegen/test-connector": "file:dataconnect-generated/js/test-connector",

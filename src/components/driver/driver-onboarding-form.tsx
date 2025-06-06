@@ -76,6 +76,7 @@ export default function DriverOnboardingForm() {
     },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function onSubmit(_values: z.infer<typeof onboardingSchema>) {
     setIsLoading(true);
     try {

@@ -1,0 +1,13 @@
+
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
+  "rules": {
+    // Add specific rules you want to disable or modify here.
+    // For example:
+    // "no-unused-vars": "warn", // To make unused variables a warning instead of an error
+    // "@typescript-eslint/no-explicit-any": "off" // To disable the rule against using 'any'
+  }
+}

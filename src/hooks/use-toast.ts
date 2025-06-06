@@ -26,12 +26,8 @@ function genId() {
   return count.toString()
 }
 
-// Define ActionType directly as a union of string literals
-type ActionType =
-  | "ADD_TOAST"
-  | "UPDATE_TOAST"
-  | "DISMISS_TOAST"
-  | "REMOVE_TOAST";
+// ActionType alias removed as it was unused.
+// The Action type below uses string literals directly for discriminated unions.
 
 type Action =
   | {

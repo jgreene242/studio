@@ -33,7 +33,21 @@ const SuggestDestinationsOutputSchema = z.object({
 export type SuggestDestinationsOutput = z.infer<typeof SuggestDestinationsOutputSchema>;
 
 export async function suggestDestinations(input: SuggestDestinationsInput): Promise<SuggestDestinationsOutput> {
-  return suggestDestinationsFlow(input);
+  console.log(`[SuggestDestinations API] Received input: ${JSON.stringify(input)}`);
+  try {
+    const result = await suggestDestinationsFlow(input);
+    console.log(`[SuggestDestinations API] Successfully returned output: ${JSON.stringify(result)}`);
+    return result;
+  } catch (flowError) {
+    // This top-level catch is for errors from suggestDestinationsFlow if it throws.
+    console.error(`[SuggestDestinations API] Error calling suggestDestinationsFlow:`, flowError);
+    // Re-throw the error that suggestDestinationsFlow already prepared (or a new generic one if it wasn't an Error instance)
+    if (flowError instanceof Error) {
+      throw flowError; // flowError should be the "An error occurred..." error or a more specific one from the flow.
+    }
+    // Fallback generic error if what was thrown wasn't an Error instance
+    throw new Error('An unexpected error occurred in the destination suggestion service.');
+  }
 }
 
 const prompt = ai.definePrompt({
@@ -61,26 +75,44 @@ const suggestDestinationsFlow = ai.defineFlow(
     inputSchema: SuggestDestinationsInputSchema,
     outputSchema: SuggestDestinationsOutputSchema,
   },
-  async input => {
+  async (input: SuggestDestinationsInput): Promise<SuggestDestinationsOutput> => {
+    console.log(`[SuggestDestinationsFlow] Executing flow with input: ${JSON.stringify(input)}`);
     try {
-      const {output} = await prompt(input);
+      const {output} = await prompt(input); // This calls the prompt
+
+      // Robust check for output and its structure
       if (!output) {
-        console.error('SuggestDestinationsFlow: The AI model did not return a valid output.');
-        // Consider what to return or how to signal this specific error.
-        // For now, we'll let Zod validation on the output schema catch this if it's truly empty/invalid,
-        // or throw a more specific error if a completely null/undefined output is not expected.
-        // If the schema expects an array and gets undefined, Zod should catch it.
-        // If the model genuinely returns an empty list due to prompt, that's valid.
-        // This check is more for an unexpected null/undefined from the Genkit `prompt` call itself.
-        throw new Error('AI model returned no output.');
+        console.error('[SuggestDestinationsFlow] AI model returned null or undefined output directly from prompt call.');
+        throw new Error('AI model returned no parsable output. The response might be empty or malformed.');
       }
-      return output; // Zod schema validation on output will still apply
+      
+      if (!output.destinations || !Array.isArray(output.destinations)) {
+          console.error(`[SuggestDestinationsFlow] AI model output is missing "destinations" array or it's not an array. Output received: ${JSON.stringify(output)}`);
+          throw new Error('AI model response was not in the expected format (missing or invalid destinations array).');
+      }
+      
+      console.log(`[SuggestDestinationsFlow] AI model returned output: ${JSON.stringify(output)}`);
+      return output;
     } catch (error) {
-      console.error('Error executing suggestDestinationsFlow:', error);
-      // Re-throw a more generic error or allow specific errors to propagate if handled upstream.
-      // This helps ensure the error is at least logged server-side.
-      throw new Error('An error occurred while trying to suggest destinations. Please try again later.');
+      let clientErrorMessage = 'An error occurred while trying to suggest destinations. Please try again later.';
+      if (error instanceof Error) {
+        console.error(`[SuggestDestinationsFlow] Error during prompt execution. Name: ${error.name}, Message: ${error.message}, Stack: ${error.stack}`);
+        // Check for common API key or permission issues if possible from error message
+        // This helps in guiding the user if the server logs are checked.
+        if (error.message.toLowerCase().includes('api key') || 
+            error.message.toLowerCase().includes('permission denied') || 
+            error.message.toLowerCase().includes('forbidden') ||
+            error.message.toLowerCase().includes('unauthenticated')) {
+            clientErrorMessage = 'There seems to be an issue with the AI service configuration or authentication. Please check server logs for details.';
+            console.error("[SuggestDestinationsFlow] Potential API key or permission issue detected.");
+        }
+      } else {
+        // Log if the caught item is not an Error instance
+        console.error('[SuggestDestinationsFlow] Unknown error type during prompt execution:', error);
+      }
+      // Throw a new error with a message intended for the client or higher-level server action handlers.
+      // The detailed error is logged above for server-side debugging.
+      throw new Error(clientErrorMessage);
     }
   }
 );
-

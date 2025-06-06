@@ -2,7 +2,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getStorage, FirebaseStorage } from 'firebase/storage'; // Added FirebaseStorage type
+import { getStorage } from 'firebase/storage'; 
 import { initializeAppCheck, ReCaptchaV3Provider, AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported as isAnalyticsSupported, Analytics } from 'firebase/analytics';
 import { getPerformance, FirebasePerformance } from 'firebase/performance';
@@ -25,7 +25,6 @@ const storage = getStorage(app); // Initialize Firebase Storage
 let appCheck: AppCheck | undefined;
 let analytics: Analytics | undefined;
 let perf: FirebasePerformance | undefined;
-// No need for a separate 'let storageInstance: FirebaseStorage | undefined;' as getStorage(app) is typically called directly.
 
 if (typeof window !== 'undefined') {
   // Initialize App Check

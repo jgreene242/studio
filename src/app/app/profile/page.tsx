@@ -93,7 +93,7 @@ export default function ProfilePage() {
          toast({ variant: "destructive", title: "Error", description: "Failed to load profile data due to an unexpected error." });
       });
     }
-  }, [user, authLoading]); // Removed form and toast from dependencies
+  }, [user, authLoading, form, toast]); 
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {

@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { User } from 'firebase/auth';
+import type { User, FirebaseError } from 'firebase/auth'; // Added FirebaseError
 import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   onAuthStateChanged, 
@@ -64,13 +64,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Registration Successful", description: "Welcome to Paradise Rides!" });
       return userCredential.user;
-    } catch (error: any) {
-      console.error("Sign up error:", error);
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      console.error("Sign up error:", firebaseError);
       let description = "An unexpected error occurred during registration.";
-      if (error.code === 'auth/email-already-in-use') {
+      if (firebaseError.code === 'auth/email-already-in-use') {
         description = "This email address is already in use. Please try a different email or log in.";
-      } else if (error.message) {
-        description = error.message;
+      } else if (firebaseError.message) {
+        description = firebaseError.message;
       }
       toast({ variant: "destructive", title: "Registration Failed", description });
       return null;
@@ -86,15 +87,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userCredential.user);
       toast({ title: "Login Successful", description: "Welcome back!" });
       return userCredential.user;
-    } catch (error: any) {
-      console.error("Sign in error:", error);
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      console.error("Sign in error:", firebaseError);
       let description = "An unexpected error occurred during login. Please try again.";
-      if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+      if (firebaseError.code === "auth/invalid-credential" || firebaseError.code === "auth/user-not-found" || firebaseError.code === "auth/wrong-password") {
         description = "Invalid email or password. Please check your credentials and try again.";
-      } else if (error.code === "auth/user-disabled") {
+      } else if (firebaseError.code === "auth/user-disabled") {
         description = "This account has been disabled. Please contact support.";
-      } else if (error.message) {
-        description = error.message;
+      } else if (firebaseError.message) {
+        description = firebaseError.message;
       }
       toast({ variant: "destructive", title: "Login Failed", description });
       return null;
@@ -126,15 +128,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(googleUser); 
       toast({ title: "Google Sign-In Successful", description: `Welcome, ${googleUser.displayName}!` });
       return googleUser;
-    } catch (error: any) {
-      console.error("Google sign in error:", error);
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      console.error("Google sign in error:", firebaseError);
       let description = "An unexpected error occurred during Google Sign-In.";
-      if (error.code === 'auth/popup-closed-by-user') {
+      if (firebaseError.code === 'auth/popup-closed-by-user') {
         description = "Google Sign-In was cancelled.";
-      } else if (error.message) {
-        description = error.message;
+      } else if (firebaseError.message) {
+        description = firebaseError.message;
       }
-      toast({ variant: error.code === 'auth/popup-closed-by-user' ? "default" : "destructive", title: "Google Sign-In Failed", description });
+      toast({ variant: firebaseError.code === 'auth/popup-closed-by-user' ? "default" : "destructive", title: "Google Sign-In Failed", description });
       return null;
     } finally {
       setLoading(false);
@@ -148,9 +151,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
-    } catch (error: any) {
-      console.error("Sign out error:", error);
-      toast({ variant: "destructive", title: "Logout Failed", description: error.message });
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      console.error("Sign out error:", firebaseError);
+      toast({ variant: "destructive", title: "Logout Failed", description: firebaseError.message });
     } finally {
       setLoading(false);
     }

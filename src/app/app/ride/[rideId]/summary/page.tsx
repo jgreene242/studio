@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea"; import { Label } from "@/components/ui/label";import Link from 'next/link';
+import { Textarea } from "@/components/ui/textarea"; 
+import { Label } from "@/components/ui/label";
+import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, CalendarDays, DollarSign, Star, ThumbsUp, MessageCircle, Loader2, AlertTriangle } from "lucide-react";
 import { doc, getDoc, updateDoc, Timestamp, serverTimestamp } from 'firebase/firestore';
@@ -95,7 +96,7 @@ export default function RideSummaryPage() {
         setIsLoading(false);
       });
     }
-  }, [rideId, user, authLoading]);
+  }, [rideId, user, authLoading, toast]); // Added toast to dependencies as it's used in submitFeedback which could be called from useEffect if logic changes
 
   const handleRating = (rate: number) => {
     if (isFeedbackSubmitted) return;

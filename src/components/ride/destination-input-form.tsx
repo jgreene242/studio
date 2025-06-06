@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import PopularDestinations from '@/components/ai/popular-destinations';
 import GoogleMapDisplay from '@/components/maps/google-map-display'; // Import the new map component
-import { MapPin, Search, LocateFixed, XCircle } from 'lucide-react';
+import { Search, LocateFixed, XCircle } from 'lucide-react';
 
 
 interface DestinationInputFormProps {

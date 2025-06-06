@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react'; // Keep useState, useEffect
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import DestinationInputForm from '@/components/ride/destination-input-form'; // Keep DestinationInputForm
 import VehicleSelector from '@/components/ride/vehicle-selector';
@@ -195,4 +195,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

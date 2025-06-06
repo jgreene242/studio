@@ -18,8 +18,8 @@ export default function HomePage() {
               Welcome to Paradise Rides
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
- Your reliable and efficient taxi service. Get a ride in minutes, track your journey, and pay seamlessly. Paradise Rides offers a seamless and enjoyable way to get around. Whether you&apos;re heading to the beach, exploring the city, or need a ride to the airport, we&apos;ve got you covered.
-</p>
+              Your reliable and efficient taxi service. Get a ride in minutes, track your journey, and pay seamlessly. Paradise Rides offers a seamless and enjoyable way to get around. Whether you&apos;re heading to the beach, exploring the city, or need a ride to the airport, we&apos;ve got you covered.
+            </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4">
               <Button size="lg" asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Link href="/auth/login">Get Started</Link>
@@ -57,8 +57,8 @@ export default function HomePage() {
                 <Palmtree className="h-12 w-12 text-accent mx-auto mb-4" /> 
                 <h3 className="text-xl font-semibold mb-2">Track Your Ride</h3>
                 <p className="text-muted-foreground">
-                  Real-time tracking of your taxi's location and ETA.
-</p>
+                  Real-time tracking of your taxi&apos;s location and ETA.
+                </p>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function HomePage() {
                             Travel with Comfort and Style
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8">
- Whether it&apos;s a quick trip across town or a ride to the airport, Paradise Rides ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
+                          Whether it&apos;s a quick trip across town or a ride to the airport, Paradise Rides ensures a comfortable and timely experience. Our diverse fleet caters to all your needs.
                         </p>
                         {/* Button removed from here */}
                     </div>
@@ -97,7 +97,7 @@ export default function HomePage() {
               Are You a Driver?
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
- Join our platform and start earning. Benefit from easy onboarding, flexible hours, and a supportive community.
+              Join our platform and start earning. Benefit from easy onboarding, flexible hours, and a supportive community.
             </p>
             <Button size="lg" variant="secondary" asChild>
               <Link href="/driver/onboarding">Become a Driver</Link>

@@ -1,7 +1,8 @@
 
 "use client";
 
-import type { User, FirebaseError } from 'firebase/auth'; // Added FirebaseError
+import type { User } from 'firebase/auth'; // FirebaseError removed from here
+import type { FirebaseError } from 'firebase/app'; // FirebaseError imported from firebase/app
 import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   onAuthStateChanged, 

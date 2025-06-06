@@ -76,7 +76,7 @@ export default function DriverOnboardingForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof onboardingSchema>) {
+  async function onSubmit(_values: z.infer<typeof onboardingSchema>) {
     setIsLoading(true);
     try {
       // TODO: Implement actual driver registration logic:

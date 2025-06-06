@@ -1,3 +1,4 @@
+
 // src/ai/flows/suggest-destinations.ts
 'use server';
 /**
@@ -61,7 +62,25 @@ const suggestDestinationsFlow = ai.defineFlow(
     outputSchema: SuggestDestinationsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const {output} = await prompt(input);
+      if (!output) {
+        console.error('SuggestDestinationsFlow: The AI model did not return a valid output.');
+        // Consider what to return or how to signal this specific error.
+        // For now, we'll let Zod validation on the output schema catch this if it's truly empty/invalid,
+        // or throw a more specific error if a completely null/undefined output is not expected.
+        // If the schema expects an array and gets undefined, Zod should catch it.
+        // If the model genuinely returns an empty list due to prompt, that's valid.
+        // This check is more for an unexpected null/undefined from the Genkit `prompt` call itself.
+        throw new Error('AI model returned no output.');
+      }
+      return output; // Zod schema validation on output will still apply
+    } catch (error) {
+      console.error('Error executing suggestDestinationsFlow:', error);
+      // Re-throw a more generic error or allow specific errors to propagate if handled upstream.
+      // This helps ensure the error is at least logged server-side.
+      throw new Error('An error occurred while trying to suggest destinations. Please try again later.');
+    }
   }
 );
+

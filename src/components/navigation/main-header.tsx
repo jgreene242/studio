@@ -3,10 +3,20 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button'; // Imported ButtonProps
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'; // Added SheetClose
 import { Menu, Car, LogOut, Home, History, UserCog, HelpCircle, ShieldCheck, Loader2, UserPlus } from 'lucide-react'; // Ensured UserPlus is imported, removed UserCircle
 import { useAuth } from '@/context/AuthContext'; // Added useAuth
+import type { LucideProps } from 'lucide-react'; // Imported LucideProps
+import type { ForwardRefExoticComponent, RefAttributes } from 'react'; // Imported ForwardRefExoticComponent and RefAttributes
+
+interface NavLink {
+  href: string;
+  label: string;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+  variant?: ButtonProps['variant']; // Made variant optional and typed
+}
+
 
 export default function MainHeader() {
   const { user, appSignOut, loading, initialLoading } = useAuth();
@@ -17,21 +27,21 @@ export default function MainHeader() {
     router.push('/'); // Redirect to homepage after logout
   };
 
-  const commonLinks = [
-    { href: '/', label: 'Home', icon: Home },
+  const commonLinks: NavLink[] = [ // Added type NavLink[]
+    { href: '/', label: 'Home', icon: Home, variant: "ghost" }, // Added default variant
   ];
 
-  const guestLinks = [
+  const guestLinks: NavLink[] = [ // Added type NavLink[]
     ...commonLinks,
     { href: '/auth/login', label: 'Log In', icon: ShieldCheck, variant: "ghost" as const },
     { href: '/auth/register', label: 'Sign Up', icon: UserPlus, variant: "default" as const },
   ];
   
-  const passengerNavLinks = [
-    { href: '/app/dashboard', label: 'Request Ride', icon: Car },
-    { href: '/app/history', label: 'Ride History', icon: History },
-    { href: '/app/profile', label: 'Profile', icon: UserCog },
-    { href: '/app/support', label: 'Support', icon: HelpCircle },
+  const passengerNavLinks: NavLink[] = [ // Added type NavLink[]
+    { href: '/app/dashboard', label: 'Request Ride', icon: Car, variant: "ghost" },
+    { href: '/app/history', label: 'Ride History', icon: History, variant: "ghost" },
+    { href: '/app/profile', label: 'Profile', icon: UserCog, variant: "ghost" },
+    { href: '/app/support', label: 'Support', icon: HelpCircle, variant: "ghost" },
   ];
 
   // TODO: Add driver links when driver roles are implemented
@@ -118,7 +128,7 @@ export default function MainHeader() {
               {/* Auth buttons in sheet footer */}
               {!initialLoading && !user && (
                 <div className="mt-auto pt-4 border-t space-y-2">
-                  {guestLinks.slice(1).map(link => ( // slice(1) to skip "Home" which is already there
+                  {guestLinks.slice(1).map(link => ( 
                      <SheetClose asChild key={link.label}>
                        <Button variant={link.variant || "ghost"} asChild className="w-full justify-start text-base py-2.5 h-auto">
                          <Link href={link.href} className="flex items-center gap-3">

@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -176,6 +177,11 @@ const Sidebar = React.forwardRef<
     ref
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const [mounted, setMounted] = React.useState(false)
+
+    React.useEffect(() => {
+      setMounted(true)
+    }, [])
 
     if (collapsible === "none") {
       return (
@@ -191,6 +197,21 @@ const Sidebar = React.forwardRef<
         </div>
       )
     }
+    
+    if (!mounted) {
+      // If not mounted, and collapsible is not 'none', render the desktop structure (or effectively its hidden state)
+      // to match server-side rendering if `isMobile` is false on server.
+      // The actual desktop content is styled to be hidden on small screens anyway.
+      // Returning null helps avoid hydration errors by ensuring server and initial client match for this specific case.
+      if (collapsible !== "offcanvas" && variant !== "sidebar") {
+         // For icon-collapsible or floating/inset variants, it's safer to return null
+         // until mounted to ensure the correct structure is rendered post-hydration.
+         return null;
+      }
+      // For default sidebar or offcanvas, the CSS handles initial hidden state well enough.
+      // And we need the container for the rail to potentially exist.
+    }
+
 
     if (isMobile) {
       return (
@@ -761,3 +782,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    

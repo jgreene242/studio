@@ -34,6 +34,15 @@ export type SuggestDestinationsOutput = z.infer<typeof SuggestDestinationsOutput
 
 export async function suggestDestinations(input: SuggestDestinationsInput): Promise<SuggestDestinationsOutput> {
   console.log(`[SuggestDestinations API] Received input: ${JSON.stringify(input)}`);
+
+  // Explicit API key check
+  if (!process.env.GEMINI_API_KEY) {
+    const apiKeyErrorMsg = "[SuggestDestinations API] CRITICAL: GEMINI_API_KEY is not available in the server environment. AI features cannot function.";
+    console.error(apiKeyErrorMsg);
+    // This error will be caught by the client if the server action is called from a client component
+    throw new Error("The AI-powered suggestion service is currently unavailable due to a configuration issue.");
+  }
+
   try {
     const result = await suggestDestinationsFlow(input);
     console.log(`[SuggestDestinations API] Successfully returned output: ${JSON.stringify(result)}`);
@@ -98,13 +107,15 @@ const suggestDestinationsFlow = ai.defineFlow(
       if (error instanceof Error) {
         console.error(`[SuggestDestinationsFlow] Error during prompt execution. Name: ${error.name}, Message: ${error.message}, Stack: ${error.stack}`);
         // Check for common API key or permission issues if possible from error message
-        // This helps in guiding the user if the server logs are checked.
-        if (error.message.toLowerCase().includes('api key') || 
-            error.message.toLowerCase().includes('permission denied') || 
-            error.message.toLowerCase().includes('forbidden') ||
-            error.message.toLowerCase().includes('unauthenticated')) {
-            clientErrorMessage = 'There seems to be an issue with the AI service configuration or authentication. Please check server logs for details.';
-            console.error("[SuggestDestinationsFlow] Potential API key or permission issue detected.");
+        const lowerErrorMessage = error.message.toLowerCase();
+        if (lowerErrorMessage.includes('api key') || 
+            lowerErrorMessage.includes('permission denied') || 
+            lowerErrorMessage.includes('forbidden') ||
+            lowerErrorMessage.includes('unauthenticated') ||
+            lowerErrorMessage.includes('api_key_invalid') || // Added more specific check
+            lowerErrorMessage.includes('could not find model')) { // Added model not found check
+            clientErrorMessage = 'There seems to be an issue with the AI service configuration, authentication, or model availability. Please check server logs for details.';
+            console.error("[SuggestDestinationsFlow] Potential API key, permission, or model issue detected based on error message.");
         }
       } else {
         // Log if the caught item is not an Error instance

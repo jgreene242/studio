@@ -1,11 +1,20 @@
 
+import React, { Suspense } from 'react';
 import RegisterForm from "@/components/auth/register-form";
+import { Loader2 } from 'lucide-react';
  
+function RegisterPageFallback() {
+  return (
+    <div className="flex justify-center items-center min-h-[300px]">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+  );
+}
+
 export default function RegisterPage() {
-  // This server-side check is limited as auth state is primarily client-side
-  // For a more robust solution, middleware or client-side checks in AuthProvider are better.
-  // if (auth.currentUser) {
-  //   redirect('/app/dashboard');
-  // }
-  return <RegisterForm />;
+  return (
+    <Suspense fallback={<RegisterPageFallback />}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

@@ -1,3 +1,4 @@
+
 {
   "name": "paradiserides-functions",
   "scripts": {
@@ -6,7 +7,7 @@
     "build:watch": "tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
-    "start": "echo \"To run locally, use Firebase emulators (npm run serve) or install firebase-functions-framework globally/as devDep if needed for 'functions-framework' command.\"",
+    "start": "echo \"To run locally, use Firebase emulators (npm run serve). firebase-functions-framework is not installed for production builds.\"",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },

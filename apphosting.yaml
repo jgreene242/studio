@@ -3,14 +3,18 @@
 # See https://firebase.google.com/docs/app-hosting/configure#cloud-run
 runConfig:
       minInstances: 0
-      # maxInstances: 100
-      # concurrency: 80
-      # cpu: 1
-      # memoryMiB: 512
+      maxInstances: 100 # Example: Allow scaling up to 100 instances
+      # concurrency: 80 # Example: Max concurrent requests per instance
+      cpu: 1 # Example: Allocate 1 CPU
+      memoryMiB: 512 # Example: Allocate 512 MiB of memory
       # Configure VPC Access.
       # See https://firebase.google.com/docs/app-hosting/configure#vpc-access
-      # vpcAccess:
-      #   connector: # Replace with your VPC connector name.
+      vpcAccess:
+        # Replace YOUR_VPC_CONNECTOR_NAME_HERE with the name of your Serverless VPC Access connector
+        # e.g., projects/YOUR_PROJECT_ID/locations/YOUR_REGION/connectors/YOUR_CONNECTOR_NAME
+        # Ensure the connector is in the same region as your App Hosting backend (e.g., us-east1).
+        connector: YOUR_VPC_CONNECTOR_NAME_HERE
+        egress: ALL_TRAFFIC # Allows all outbound traffic through the VPC connector. Adjust if needed.
 
 # Environment variables and secrets.
 # Grant access to secrets in Cloud Secret Manager.

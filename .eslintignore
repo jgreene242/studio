@@ -1,0 +1,18 @@
+
+node_modules
+.next
+out
+build
+dist
+
+# Common config files that might use different JS/TS standards
+*.config.js
+*.config.ts
+next.config.mjs
+babel.config.js
+postcss.config.js
+tailwind.config.js
+components.json
+apphosting.yaml
+firebase.json
+genkit.config.js

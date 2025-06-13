@@ -26,9 +26,6 @@ function genId() {
   return count.toString()
 }
 
-// ActionType alias removed as it was unused.
-// The Action type below uses string literals directly for discriminated unions.
-
 type Action =
   | {
       type: "ADD_TOAST"
